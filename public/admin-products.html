@@ -1,316 +1,946 @@
-<script type="module">
-  import { upload } from "https://esm.sh/@vercel/blob@2.6.1/client";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  const form = document.getElementById("product-form");
-  const submitButton = document.getElementById("submit-button");
-  const statusBox = document.getElementById("status");
+  <title>Product Manager — AR Shoe Try-On</title>
 
-  const imageInput = document.getElementById("product-image");
-  const effectInput = document.getElementById("product-effect");
-
-  const imageInfo = document.getElementById("image-info");
-  const effectInfo = document.getElementById("effect-info");
-
-  imageInput.addEventListener("change", function () {
-    const file = this.files[0];
-
-    imageInfo.textContent = file
-      ? `${file.name} (${formatFileSize(file.size)})`
-      : "No image selected";
-  });
-
-  effectInput.addEventListener("change", function () {
-    const file = this.files[0];
-
-    effectInfo.textContent = file
-      ? `${file.name} (${formatFileSize(file.size)})`
-      : "No .deepar file selected";
-  });
-
-  function formatFileSize(bytes) {
-    if (bytes < 1024) {
-      return `${bytes} B`;
+  <style>
+    * {
+      box-sizing: border-box;
     }
 
-    if (bytes < 1024 * 1024) {
-      return `${(bytes / 1024).toFixed(1)} KB`;
+    :root {
+      --bg: #f5f5f7;
+      --card: #ffffff;
+      --text: #171717;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --black: #111111;
+      --success-bg: #ecfdf5;
+      --success-text: #047857;
+      --error-bg: #fef2f2;
+      --error-text: #b91c1c;
+      --loading-bg: #eff6ff;
+      --loading-text: #1d4ed8;
     }
 
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+    }
 
-  function showStatus(message, type) {
-    statusBox.textContent = message;
-    statusBox.className = `status ${type}`;
-  }
+    .admin {
+      width: min(100% - 32px, 920px);
+      margin: 0 auto;
+      padding: 60px 0 80px;
+    }
 
-  /*
-   * Convert product image to Base64.
-   * The image is normally small enough for the API.
-   */
-  function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
+    .header {
+      margin-bottom: 28px;
+    }
 
-      reader.onload = () => {
-        resolve(reader.result.split(",")[1]);
-      };
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: #6b7280;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
 
-      reader.onerror = () => {
-        reject(
-          new Error(`Could not read ${file.name}`)
-        );
-      };
+    h1 {
+      margin: 0;
+      font-size: clamp(32px, 5vw, 52px);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
 
-      reader.readAsDataURL(file);
-    });
-  }
+    .subtitle {
+      max-width: 650px;
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+    }
 
-  /*
-   * Upload .deepar DIRECTLY to Vercel Blob.
-   *
-   * The 11.6 MB file therefore does NOT pass
-   * through /api/add-product.
-   */
-  async function uploadEffectToBlob(file) {
-    showStatus(
-      "Uploading DeepAR effect...",
-      "loading"
-    );
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.04),
+        0 2px 8px rgba(0, 0, 0, 0.03);
+    }
 
-    const blob = await upload(
-      `effects/${Date.now()}-${file.name}`,
-      file,
-      {
-        access: "private",
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
 
-        handleUploadUrl:
-          "/api/upload-effect",
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
-        multipart: true,
+    .field.full {
+      grid-column: 1 / -1;
+    }
 
-        onUploadProgress(event) {
-          const progress =
-            Math.round(event.percentage);
+    label {
+      font-size: 14px;
+      font-weight: 650;
+    }
 
-          showStatus(
-            `Uploading DeepAR effect... ${progress}%`,
-            "loading"
-          );
-        }
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fafafa;
+      color: var(--text);
+      font: inherit;
+      outline: none;
+      transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    input {
+      min-height: 50px;
+      padding: 0 15px;
+    }
+
+    textarea {
+      min-height: 130px;
+      padding: 14px 15px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+      background: #fff;
+      border-color: #9ca3af;
+      box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.06);
+    }
+
+    .file-box {
+      position: relative;
+      min-height: 118px;
+      padding: 18px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 16px;
+      background: #fafafa;
+      transition: 0.2s ease;
+    }
+
+    .file-box:hover {
+      border-color: #9ca3af;
+      background: #fff;
+    }
+
+    .file-box input[type="file"] {
+      width: 100%;
+      min-height: auto;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .file-info {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .hint {
+      margin-top: 7px;
+      color: #9ca3af;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .status {
+      display: none;
+      margin-top: 24px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .status.loading,
+    .status.success,
+    .status.error {
+      display: block;
+    }
+
+    .status.loading {
+      background: var(--loading-bg);
+      color: var(--loading-text);
+    }
+
+    .status.success {
+      background: var(--success-bg);
+      color: var(--success-text);
+    }
+
+    .status.error {
+      background: var(--error-bg);
+      color: var(--error-text);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 26px;
+    }
+
+    button {
+      min-height: 50px;
+      padding: 0 24px;
+      border: 0;
+      border-radius: 14px;
+      background: var(--black);
+      color: #fff;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 650;
+      cursor: pointer;
+      transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: #9ca3af;
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    @media (max-width: 700px) {
+      .admin {
+        width: min(100% - 22px, 920px);
+        padding: 30px 0 50px;
+      }
+
+      .card {
+        padding: 20px;
+        border-radius: 20px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .actions {
+        display: block;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="admin">
+
+    <header class="header">
+      <span class="eyebrow">AR Shoe Try-On</span>
+
+      <h1>Product Manager</h1>
+
+      <p class="subtitle">
+        Add a new shoe product, upload its product image and connect
+        the DeepAR try-on effect. Products are saved to GitHub and
+        deployed automatically through Vercel.
+      </p>
+    </header>
+
+    <section class="card">
+
+      <form id="product-form">
+
+        <div class="form-grid">
+
+          <!-- Product Name -->
+          <div class="field">
+            <label for="product-name">
+              Product Name
+            </label>
+
+            <input
+              id="product-name"
+              type="text"
+              placeholder="e.g. Traditional Embroidered Khussa"
+              required
+            />
+          </div>
+
+          <!-- Price -->
+          <div class="field">
+            <label for="product-price">
+              Price
+            </label>
+
+            <input
+              id="product-price"
+              type="text"
+              placeholder="e.g. Rs. 4,999"
+              required
+            />
+          </div>
+
+          <!-- Description -->
+          <div class="field full">
+            <label for="product-description">
+              Description
+            </label>
+
+            <textarea
+              id="product-description"
+              placeholder="Describe the shoe, material, style and other product details..."
+              required
+            ></textarea>
+          </div>
+
+          <!-- Product Image -->
+          <div class="field">
+
+            <label for="product-image">
+              Product Image
+            </label>
+
+            <div class="file-box">
+
+              <input
+                id="product-image"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                required
+              />
+
+              <div
+                id="image-info"
+                class="file-info"
+              >
+                No image selected
+              </div>
+
+              <div class="hint">
+                JPG, PNG or WebP. Maximum 2.5 MB.
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- DeepAR Effect -->
+          <div class="field">
+
+            <label for="product-effect">
+              DeepAR Effect
+            </label>
+
+            <div class="file-box">
+
+              <input
+                id="product-effect"
+                type="file"
+                accept=".deepar,application/octet-stream"
+                required
+              />
+
+              <div
+                id="effect-info"
+                class="file-info"
+              >
+                No .deepar file selected
+              </div>
+
+              <div class="hint">
+                Upload the exported DeepAR shoe try-on effect.
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Status -->
+        <div
+          id="status"
+          class="status"
+          role="status"
+          aria-live="polite"
+        ></div>
+
+        <!-- Submit -->
+        <div class="actions">
+
+          <button
+            id="submit-button"
+            type="submit"
+          >
+            Add Product
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+    <div class="footer-note">
+      DeepAR files are uploaded directly to private Vercel Blob storage.
+    </div>
+
+  </main>
+
+
+  <script type="module">
+
+    import {
+      upload
+    } from "https://esm.sh/@vercel/blob@2.6.1/client";
+
+
+    /*
+     * ---------------------------------------------------------
+     * ELEMENTS
+     * ---------------------------------------------------------
+     */
+
+    const form =
+      document.getElementById("product-form");
+
+    const submitButton =
+      document.getElementById("submit-button");
+
+    const statusBox =
+      document.getElementById("status");
+
+    const imageInput =
+      document.getElementById("product-image");
+
+    const effectInput =
+      document.getElementById("product-effect");
+
+    const imageInfo =
+      document.getElementById("image-info");
+
+    const effectInfo =
+      document.getElementById("effect-info");
+
+
+    /*
+     * ---------------------------------------------------------
+     * FILE SIZE
+     * ---------------------------------------------------------
+     */
+
+    function formatFileSize(bytes) {
+
+      if (bytes < 1024) {
+        return `${bytes} B`;
+      }
+
+      if (bytes < 1024 * 1024) {
+        return `${(bytes / 1024).toFixed(1)} KB`;
+      }
+
+      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+
+    /*
+     * ---------------------------------------------------------
+     * STATUS
+     * ---------------------------------------------------------
+     */
+
+    function showStatus(message, type) {
+
+      statusBox.textContent = message;
+
+      statusBox.className =
+        `status ${type}`;
+    }
+
+
+    /*
+     * ---------------------------------------------------------
+     * FILE INFORMATION
+     * ---------------------------------------------------------
+     */
+
+    imageInput.addEventListener(
+      "change",
+      function () {
+
+        const file =
+          this.files[0];
+
+        imageInfo.textContent =
+          file
+            ? `${file.name} (${formatFileSize(file.size)})`
+            : "No image selected";
       }
     );
 
-    if (!blob || !blob.url) {
-      throw new Error(
-        "DeepAR upload completed but no Blob URL was returned."
+
+    effectInput.addEventListener(
+      "change",
+      function () {
+
+        const file =
+          this.files[0];
+
+        effectInfo.textContent =
+          file
+            ? `${file.name} (${formatFileSize(file.size)})`
+            : "No .deepar file selected";
+      }
+    );
+
+
+    /*
+     * ---------------------------------------------------------
+     * IMAGE → BASE64
+     * ---------------------------------------------------------
+     */
+
+    function fileToBase64(file) {
+
+      return new Promise(
+        (resolve, reject) => {
+
+          const reader =
+            new FileReader();
+
+          reader.onload = () => {
+
+            const result =
+              reader.result;
+
+            if (
+              typeof result !== "string"
+            ) {
+              reject(
+                new Error(
+                  "Could not read image."
+                )
+              );
+
+              return;
+            }
+
+            resolve(
+              result.split(",")[1]
+            );
+          };
+
+          reader.onerror = () => {
+
+            reject(
+              new Error(
+                `Could not read ${file.name}`
+              )
+            );
+          };
+
+          reader.readAsDataURL(file);
+        }
       );
     }
 
-    return blob.url;
-  }
 
-  /*
-   * Submit product
-   */
-  form.addEventListener(
-    "submit",
-    async function (event) {
+    /*
+     * ---------------------------------------------------------
+     * DEEPAR → PRIVATE VERCEL BLOB
+     * ---------------------------------------------------------
+     */
 
-      event.preventDefault();
+    async function uploadEffectToBlob(file) {
 
-      const name = document
-        .getElementById("product-name")
-        .value
-        .trim();
+      showStatus(
+        "Uploading DeepAR effect...",
+        "loading"
+      );
 
-      const price = document
-        .getElementById("product-price")
-        .value
-        .trim();
-
-      const description = document
-        .getElementById("product-description")
-        .value
-        .trim();
-
-      const imageFile =
-        imageInput.files[0];
-
-      const effectFile =
-        effectInput.files[0];
-
-      /*
-       * Validation
-       */
-      if (!name || !price || !description) {
-        showStatus(
-          "Please fill in all product details.",
-          "error"
-        );
-        return;
-      }
-
-      if (!imageFile) {
-        showStatus(
-          "Please select a product image.",
-          "error"
-        );
-        return;
-      }
-
-      if (!effectFile) {
-        showStatus(
-          "Please select a .deepar effect file.",
-          "error"
-        );
-        return;
-      }
-
-      if (
-        !effectFile.name
-          .toLowerCase()
-          .endsWith(".deepar")
-      ) {
-        showStatus(
-          "The selected effect must be a .deepar file.",
-          "error"
-        );
-        return;
-      }
-
-      try {
-
-        submitButton.disabled = true;
-        submitButton.textContent =
-          "Uploading...";
-
-        /*
-         * Image → Base64
-         */
-        showStatus(
-          "Preparing product image...",
-          "loading"
-        );
-
-        const imageBase64 =
-          await fileToBase64(imageFile);
-
-        /*
-         * DeepAR → Vercel Blob
-         *
-         * IMPORTANT:
-         * The large .deepar file is NOT sent
-         * to /api/add-product.
-         */
-        const effectBlobUrl =
-          await uploadEffectToBlob(effectFile);
-
-        /*
-         * Send product information + Blob URL
-         * to our GitHub API.
-         */
-        showStatus(
-          "Adding product to GitHub...",
-          "loading"
-        );
-
-        const response = await fetch(
-          "/api/add-product",
+      const blob =
+        await upload(
+          `effects/${Date.now()}-${file.name}`,
+          file,
           {
-            method: "POST",
+            access: "private",
 
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
+            handleUploadUrl:
+              "/api/upload-effect",
 
-            body: JSON.stringify({
-              name,
-              price,
-              description,
+            multipart: true,
 
-              imageBase64,
-              imageName:
-                imageFile.name,
+            onUploadProgress(event) {
 
-              effectBlobUrl,
+              const progress =
+                Math.round(
+                  event.percentage || 0
+                );
 
-              effectName:
-                effectFile.name
-            })
+              showStatus(
+                `Uploading DeepAR effect... ${progress}%`,
+                "loading"
+              );
+            }
           }
         );
 
+
+      if (
+        !blob ||
+        !blob.pathname
+      ) {
+
+        throw new Error(
+          "DeepAR upload completed but no Blob pathname was returned."
+        );
+      }
+
+
+      /*
+       * Private Blob:
+       * send pathname, not URL.
+       */
+
+      return blob.pathname;
+    }
+
+
+    /*
+     * ---------------------------------------------------------
+     * FORM SUBMIT
+     * ---------------------------------------------------------
+     */
+
+    form.addEventListener(
+      "submit",
+      async function (event) {
+
+        event.preventDefault();
+
+
+        const name =
+          document
+            .getElementById("product-name")
+            .value
+            .trim();
+
+
+        const price =
+          document
+            .getElementById("product-price")
+            .value
+            .trim();
+
+
+        const description =
+          document
+            .getElementById("product-description")
+            .value
+            .trim();
+
+
+        const imageFile =
+          imageInput.files[0];
+
+
+        const effectFile =
+          effectInput.files[0];
+
+
         /*
-         * Don't blindly call response.json().
-         * This prevents the old:
-         *
-         * Unexpected token 'R'
-         *
-         * error when Vercel returns plain text.
+         * -----------------------------------------------------
+         * VALIDATION
+         * -----------------------------------------------------
          */
-        const responseText =
-          await response.text();
-
-        let result;
-
-        try {
-          result =
-            JSON.parse(responseText);
-        } catch {
-          throw new Error(
-            responseText ||
-            `Server returned HTTP ${response.status}`
-          );
-        }
 
         if (
-          !response.ok ||
-          !result.success
+          !name ||
+          !price ||
+          !description
         ) {
-          throw new Error(
-            result.message ||
-            "Product upload failed."
+
+          showStatus(
+            "Please fill in all product details.",
+            "error"
           );
+
+          return;
         }
 
+
+        if (!imageFile) {
+
+          showStatus(
+            "Please select a product image.",
+            "error"
+          );
+
+          return;
+        }
+
+
+        if (!effectFile) {
+
+          showStatus(
+            "Please select a .deepar effect file.",
+            "error"
+          );
+
+          return;
+        }
+
+
+        if (
+          !effectFile.name
+            .toLowerCase()
+            .endsWith(".deepar")
+        ) {
+
+          showStatus(
+            "The selected effect must be a .deepar file.",
+            "error"
+          );
+
+          return;
+        }
+
+
         /*
-         * Success
+         * Keep image small enough for
+         * Vercel Function request.
          */
-        showStatus(
-          `Product "${name}" added successfully. GitHub and Vercel will update automatically.`,
-          "success"
-        );
 
-        form.reset();
+        if (
+          imageFile.size >
+          2.5 * 1024 * 1024
+        ) {
 
-        imageInfo.textContent =
-          "No image selected";
+          showStatus(
+            "Product image must be smaller than 2.5 MB.",
+            "error"
+          );
 
-        effectInfo.textContent =
-          "No .deepar file selected";
+          return;
+        }
 
-      } catch (error) {
 
-        console.error(
-          "Product upload error:",
-          error
-        );
+        try {
 
-        showStatus(
-          error.message ||
-          "Something went wrong while adding the product.",
-          "error"
-        );
+          submitButton.disabled = true;
 
-      } finally {
+          submitButton.textContent =
+            "Uploading...";
 
-        submitButton.disabled = false;
 
-        submitButton.textContent =
-          "Add Product";
+          /*
+           * ---------------------------------------------------
+           * IMAGE
+           * ---------------------------------------------------
+           */
+
+          showStatus(
+            "Preparing product image...",
+            "loading"
+          );
+
+
+          const imageBase64 =
+            await fileToBase64(
+              imageFile
+            );
+
+
+          /*
+           * ---------------------------------------------------
+           * DEEPAR
+           * ---------------------------------------------------
+           */
+
+          const effectBlobPathname =
+            await uploadEffectToBlob(
+              effectFile
+            );
+
+
+          /*
+           * ---------------------------------------------------
+           * GITHUB
+           * ---------------------------------------------------
+           */
+
+          showStatus(
+            "Adding product to GitHub...",
+            "loading"
+          );
+
+
+          const response =
+            await fetch(
+              "/api/add-product",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body: JSON.stringify({
+                  name,
+                  price,
+                  description,
+
+                  imageBase64,
+
+                  imageName:
+                    imageFile.name,
+
+                  effectBlobPathname,
+
+                  effectName:
+                    effectFile.name
+                })
+              }
+            );
+
+
+          const responseText =
+            await response.text();
+
+
+          let result;
+
+
+          try {
+
+            result =
+              JSON.parse(
+                responseText
+              );
+
+          } catch {
+
+            throw new Error(
+              responseText ||
+              `Server returned HTTP ${response.status}`
+            );
+          }
+
+
+          if (
+            !response.ok ||
+            !result.success
+          ) {
+
+            throw new Error(
+              result.message ||
+              "Product upload failed."
+            );
+          }
+
+
+          /*
+           * ---------------------------------------------------
+           * SUCCESS
+           * ---------------------------------------------------
+           */
+
+          showStatus(
+            `Product "${name}" added successfully. GitHub and Vercel will update automatically.`,
+            "success"
+          );
+
+
+          form.reset();
+
+
+          imageInfo.textContent =
+            "No image selected";
+
+
+          effectInfo.textContent =
+            "No .deepar file selected";
+
+
+        } catch (error) {
+
+          console.error(
+            "Product upload error:",
+            error
+          );
+
+
+          showStatus(
+            error?.message ||
+            "Something went wrong while adding the product.",
+            "error"
+          );
+
+
+        } finally {
+
+          submitButton.disabled =
+            false;
+
+          submitButton.textContent =
+            "Add Product";
+        }
+
       }
-    }
-  );
-</script>
+    );
+
+  </script>
+
+</body>
+</html>

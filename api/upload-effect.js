@@ -9,57 +9,53 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { filename, contentType } = req.body || {};
+    const body = req.body || {};
 
-    if (!filename) {
-      return res.status(400).json({
-        success: false,
-        message: "Filename is required.",
-      });
-    }
-
-    if (!filename.toLowerCase().endsWith(".deepar")) {
-      return res.status(400).json({
-        success: false,
-        message: "Only .deepar files are allowed.",
-      });
-    }
-
-    const token = await handleUpload({
-      body: {
-        type: "blob.generate-client-token",
-        payload: JSON.stringify({
-          pathname: `effects/${filename}`,
-          callbackUrl: `${getBaseUrl(req)}/api/upload-effect`,
-        }),
-      },
+    const response = await handleUpload({
+      body,
       request: req,
+
+      onBeforeGenerateToken: async (pathname) => {
+        const filename = pathname.split("/").pop();
+
+        if (!filename.toLowerCase().endsWith(".deepar")) {
+          throw new Error(
+            "Only .deepar files are allowed."
+          );
+        }
+
+        return {
+          allowedContentTypes: [
+            "application/octet-stream",
+          ],
+          maximumSizeInBytes:
+            90 * 1024 * 1024,
+        };
+      },
+
+      onUploadCompleted: async ({
+        blob,
+      }) => {
+        console.log(
+          "DeepAR Blob upload completed:",
+          blob.url
+        );
+      },
     });
 
-    return res.status(200).json({
-      success: true,
-      uploadUrl: token,
-    });
+    return res.status(200).json(response);
 
   } catch (error) {
-    console.error("Blob upload token error:", error);
+    console.error(
+      "Blob upload error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
       message:
         error.message ||
-        "Could not create Blob upload token.",
+        "Blob upload failed.",
     });
   }
-}
-
-function getBaseUrl(req) {
-  const protocol =
-    req.headers["x-forwarded-proto"] || "https";
-
-  const host =
-    req.headers["x-forwarded-host"] ||
-    req.headers.host;
-
-  return `${protocol}://${host}`;
 }
