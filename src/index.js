@@ -63,7 +63,7 @@ async function initializeDeepar(effectName) {
 
       // IMPORTANT:
       // Replace this with your active DeepAR license key.
-      licenseKey: "YOUR_DEEPAR_LICENSE_KEY",
+      licenseKey: "911c24ddac2e0d44a1d14a091ef7adb832e3465bc4890aaa04a9149a75fdd16ba8f3b9b3d4eadcb6",
 
       canvas: canvas,
 
