@@ -16,6 +16,7 @@
     "webpack-dev-server": "^4.11.0"
   },
   "dependencies": {
+    "@vercel/blob": "^2.8.0",
     "bootstrap": "^5.3.2",
     "deepar": "^5.0.0"
   }
