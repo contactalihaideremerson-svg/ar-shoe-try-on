@@ -1,45 +1,910 @@
 <!doctype html>
-<html lang="en-us">
+<html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
-  <title>Perfect Match - Welcom</title>
-  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/5499/5499242.png" type="image/x-icon">
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>PerfectMatch — AR Shoe Try-On</title>
+
+  <link rel="shortcut icon"
+    href="https://cdn-icons-png.flaticon.com/512/5499/5499242.png"
+    type="image/x-icon">
+
+  <!-- Existing styles -->
   <link rel="stylesheet" href="main.css">
   <link rel="stylesheet" href="mycss.css">
-  <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.0.13/css/all.css' asp-append-version="true">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" asp-append-version="true" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
   <script src="bootstrap.bundle.min.js"></script>
   <script src="myscript.js"></script>
-  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 </head>
-<header>
-  <nav class="navbar fixed-top navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-      <div class="container-fluid">
-          <iconify-icon icon="ph:eye-light" width="30" height="30" style="margin-right: 10px;margin-left: 50px; "></iconify-icon>
-          <a class="navbar-brand" href="tryon.html">Perfect Match</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                  aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-              <ul class="navbar-nav flex-grow-1">
-              </ul>
-          </div>
-      </div>
-  </nav>
-<body style="background: url(store.jpg);background-size: cover; background-repeat: no-repeat;">
-    <div class="container index-page w-50">
-        <div style="margin-top: 250px;">
-                <h2>Welcome to PerfectMatch</h2>
-                <p>An online platform that utilizes augmented reality and image recognition technology to enable users to virtually try on various styles of shoes using their device's camera. It offers a realistic and interactive experience, allowing users to visualize how different shoes look on their feet without physically trying them on.</p> 
-                <p>Continued use of this platform signifies your acceptance of our <a href="privacy.html">Privary Policy</a>.</p>  
-                <button id="getStartBtn" type="button" class="btn btn-primary btn-lg" style="width: 130px;border-radius: 30px;margin: 10px;">Get start</button>  
+
+<body>
+
+  <main class="pm-home">
+
+    <!-- Navigation -->
+    <nav class="pm-nav">
+
+      <a href="index.html" class="pm-brand">
+        <span class="pm-brand-icon">
+          👟
+        </span>
+
+        <span>
+          <strong>PerfectMatch</strong>
+          <small>AR Shoe Try-On</small>
+        </span>
+      </a>
+
+      <a href="privacy.html" class="pm-nav-link">
+        Privacy
+      </a>
+
+    </nav>
+
+
+    <!-- Hero -->
+    <section class="pm-hero">
+
+      <div class="pm-hero-content">
+
+        <div class="pm-eyebrow">
+          <span class="pm-live-dot"></span>
+          Virtual footwear experience
         </div>
-    </div>    
-  <script type="text/javascript" src="main.js"></script>
+
+        <h1>
+          Find your
+          <span>perfect pair.</span>
+        </h1>
+
+        <p class="pm-description">
+          Try shoes virtually using your camera and see how they look
+          on your feet before you buy.
+        </p>
+
+
+        <!-- CTA -->
+        <button
+          id="getStartBtn"
+          type="button"
+          class="pm-primary-btn">
+
+          <span>Try shoes virtually</span>
+
+          <span class="pm-arrow">
+            →
+          </span>
+
+        </button>
+
+
+        <p class="pm-privacy-note">
+          Camera access is required for the virtual try-on experience.
+        </p>
+
+
+        <!-- Features -->
+        <div class="pm-features">
+
+          <div class="pm-feature">
+            <div class="pm-feature-icon">◉</div>
+            <div>
+              <strong>Real-time AR</strong>
+              <span>See shoes on your feet</span>
+            </div>
+          </div>
+
+          <div class="pm-feature">
+            <div class="pm-feature-icon">✦</div>
+            <div>
+              <strong>Multiple styles</strong>
+              <span>Explore different shoes</span>
+            </div>
+          </div>
+
+          <div class="pm-feature">
+            <div class="pm-feature-icon">✓</div>
+            <div>
+              <strong>Easy to use</strong>
+              <span>No app installation</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Product Visual -->
+      <div class="pm-visual">
+
+        <div class="pm-glow"></div>
+
+        <div class="pm-image-card">
+
+          <img
+            src="store.jpg"
+            alt="PerfectMatch virtual shoe try-on">
+
+          <div class="pm-image-overlay"></div>
+
+          <div class="pm-floating-card">
+
+            <div class="pm-mini-shoe">
+              👟
+            </div>
+
+            <div>
+              <strong>Virtual Try-On</strong>
+              <span>Ready when you are</span>
+            </div>
+
+            <div class="pm-check">
+              ✓
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="pm-circle pm-circle-one"></div>
+        <div class="pm-circle pm-circle-two"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- Bottom trust section -->
+    <section class="pm-bottom">
+
+      <div>
+        <strong>See it.</strong>
+        <span>Try it.</span>
+        <strong>Love it.</strong>
+      </div>
+
+      <p>
+        Virtual fit. Real style.
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <!-- Existing application bundle -->
+  <script src="main.js"></script>
+
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      font-family: "Inter", sans-serif;
+      background: #f7f7f5;
+      color: #111111;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .pm-home {
+      min-height: 100vh;
+      min-height: 100dvh;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 85% 20%, rgba(216, 226, 255, 0.55), transparent 30%),
+        radial-gradient(circle at 10% 85%, rgba(235, 225, 255, 0.5), transparent 30%),
+        #f8f8f6;
+    }
+
+
+    /* NAV */
+
+    .pm-nav {
+      position: relative;
+      z-index: 10;
+
+      width: min(1180px, calc(100% - 48px));
+      margin: auto;
+      padding: 24px 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .pm-brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+
+      color: #111;
+      text-decoration: none;
+    }
+
+    .pm-brand-icon {
+      width: 42px;
+      height: 42px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 13px;
+
+      background: #111;
+      color: white;
+
+      font-size: 20px;
+
+      box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .pm-brand strong {
+      display: block;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+    }
+
+    .pm-brand small {
+      display: block;
+      margin-top: 2px;
+
+      font-size: 10px;
+      font-weight: 500;
+
+      color: #858585;
+      letter-spacing: 0.3px;
+    }
+
+    .pm-nav-link {
+      color: #555;
+      text-decoration: none;
+
+      font-size: 13px;
+      font-weight: 600;
+
+      padding: 10px 15px;
+
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 999px;
+
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(10px);
+
+      transition: 0.2s ease;
+    }
+
+    .pm-nav-link:hover {
+      color: #111;
+      background: white;
+    }
+
+
+    /* HERO */
+
+    .pm-hero {
+      width: min(1180px, calc(100% - 48px));
+      margin: auto;
+
+      min-height: calc(100vh - 100px);
+      min-height: calc(100dvh - 100px);
+
+      display: grid;
+      grid-template-columns: 1fr 0.9fr;
+      align-items: center;
+      gap: 70px;
+
+      padding: 30px 0 70px;
+    }
+
+
+    .pm-hero-content {
+      position: relative;
+      z-index: 3;
+      max-width: 570px;
+    }
+
+
+    /* EYEBROW */
+
+    .pm-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      padding: 8px 13px;
+
+      border-radius: 999px;
+
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+
+      color: #686868;
+
+      font-size: 11px;
+      font-weight: 600;
+
+      letter-spacing: 0.2px;
+    }
+
+    .pm-live-dot {
+      width: 7px;
+      height: 7px;
+
+      border-radius: 50%;
+      background: #32c56a;
+
+      box-shadow: 0 0 0 4px rgba(50, 197, 106, 0.12);
+    }
+
+
+    /* TITLE */
+
+    .pm-hero h1 {
+      margin: 23px 0 18px;
+
+      font-size: clamp(48px, 6vw, 82px);
+      line-height: 0.98;
+
+      font-weight: 800;
+      letter-spacing: -4px;
+    }
+
+    .pm-hero h1 span {
+      display: block;
+
+      background: linear-gradient(
+        100deg,
+        #111,
+        #656565
+      );
+
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+
+    .pm-description {
+      max-width: 500px;
+
+      margin: 0 0 27px;
+
+      color: #666;
+
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+
+    /* CTA */
+
+    .pm-primary-btn {
+      border: 0;
+      outline: none;
+
+      min-height: 58px;
+      padding: 0 8px 0 23px;
+
+      display: inline-flex;
+      align-items: center;
+      gap: 20px;
+
+      border-radius: 999px;
+
+      background: #111;
+      color: white;
+
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.18);
+
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .pm-primary-btn:hover {
+      transform: translateY(-2px);
+
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.22);
+    }
+
+    .pm-primary-btn:active {
+      transform: scale(0.97);
+    }
+
+    .pm-arrow {
+      width: 43px;
+      height: 43px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      background: white;
+      color: #111;
+
+      font-size: 20px;
+    }
+
+
+    .pm-privacy-note {
+      margin: 12px 0 0 7px;
+
+      color: #999;
+
+      font-size: 10px;
+    }
+
+
+    /* FEATURES */
+
+    .pm-features {
+      display: flex;
+      gap: 30px;
+
+      margin-top: 45px;
+    }
+
+    .pm-feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pm-feature-icon {
+      width: 32px;
+      height: 32px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 10px;
+
+      background: white;
+
+      box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.05);
+
+      font-size: 13px;
+    }
+
+    .pm-feature strong,
+    .pm-feature span {
+      display: block;
+    }
+
+    .pm-feature strong {
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .pm-feature span {
+      margin-top: 2px;
+
+      color: #999;
+
+      font-size: 9px;
+    }
+
+
+    /* PRODUCT VISUAL */
+
+    .pm-visual {
+      position: relative;
+
+      min-height: 600px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pm-glow {
+      position: absolute;
+
+      width: 480px;
+      height: 480px;
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(188, 201, 255, 0.55),
+          rgba(240, 235, 255, 0.1) 65%,
+          transparent 70%
+        );
+
+      filter: blur(5px);
+    }
+
+    .pm-image-card {
+      position: relative;
+      z-index: 2;
+
+      width: min(470px, 90%);
+
+      aspect-ratio: 0.82;
+
+      overflow: hidden;
+
+      border-radius: 38px;
+
+      background: #ddd;
+
+      box-shadow:
+        0 35px 80px rgba(0, 0, 0, 0.17);
+
+      transform: rotate(2deg);
+    }
+
+    .pm-image-card img {
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+
+      display: block;
+
+      transform: scale(1.04);
+    }
+
+    .pm-image-overlay {
+      position: absolute;
+      inset: 0;
+
+      background:
+        linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.42),
+          transparent 45%
+        );
+    }
+
+
+    /* FLOATING CARD */
+
+    .pm-floating-card {
+      position: absolute;
+
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+
+      display: flex;
+      align-items: center;
+
+      gap: 11px;
+
+      padding: 12px;
+
+      border-radius: 18px;
+
+      background: rgba(255, 255, 255, 0.92);
+
+      backdrop-filter: blur(15px);
+
+      box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.15);
+
+      transform: rotate(-2deg);
+    }
+
+    .pm-mini-shoe {
+      width: 40px;
+      height: 40px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 13px;
+
+      background: #f0f0f0;
+
+      font-size: 20px;
+    }
+
+    .pm-floating-card strong {
+      display: block;
+
+      font-size: 12px;
+    }
+
+    .pm-floating-card span {
+      display: block;
+
+      margin-top: 3px;
+
+      color: #888;
+
+      font-size: 9px;
+    }
+
+    .pm-check {
+      margin-left: auto;
+
+      width: 28px;
+      height: 28px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      background: #28bd68;
+      color: white;
+
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+
+    .pm-circle {
+      position: absolute;
+
+      border-radius: 50%;
+
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .pm-circle-one {
+      width: 80px;
+      height: 80px;
+
+      right: 5%;
+      top: 18%;
+    }
+
+    .pm-circle-two {
+      width: 35px;
+      height: 35px;
+
+      left: 6%;
+      bottom: 20%;
+    }
+
+
+    /* BOTTOM */
+
+    .pm-bottom {
+      position: absolute;
+
+      bottom: 20px;
+      left: 50%;
+
+      transform: translateX(-50%);
+
+      text-align: center;
+
+      white-space: nowrap;
+    }
+
+    .pm-bottom div {
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: -0.3px;
+    }
+
+    .pm-bottom strong {
+      font-weight: 800;
+    }
+
+    .pm-bottom span {
+      color: #777;
+    }
+
+    .pm-bottom p {
+      margin: 5px 0 0;
+
+      color: #aaa;
+
+      font-size: 8px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+
+    /* MOBILE */
+
+    @media (max-width: 850px) {
+
+      .pm-nav {
+        width: calc(100% - 32px);
+        padding: 18px 0;
+      }
+
+      .pm-nav-link {
+        font-size: 11px;
+        padding: 8px 12px;
+      }
+
+      .pm-hero {
+        width: calc(100% - 32px);
+
+        display: flex;
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 30px;
+
+        padding-top: 35px;
+        padding-bottom: 110px;
+
+        min-height: auto;
+      }
+
+      .pm-hero-content {
+        max-width: none;
+      }
+
+      .pm-eyebrow {
+        font-size: 10px;
+      }
+
+      .pm-hero h1 {
+        margin-top: 18px;
+
+        font-size: clamp(45px, 13vw, 68px);
+
+        letter-spacing: -3px;
+      }
+
+      .pm-description {
+        font-size: 14px;
+        line-height: 1.6;
+
+        max-width: 390px;
+      }
+
+      .pm-primary-btn {
+        width: 100%;
+        justify-content: space-between;
+
+        min-height: 58px;
+      }
+
+      .pm-features {
+        margin-top: 27px;
+
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+
+        gap: 16px;
+      }
+
+      .pm-feature:last-child {
+        grid-column: span 2;
+      }
+
+      .pm-visual {
+        min-height: 390px;
+      }
+
+      .pm-image-card {
+        width: min(370px, 88%);
+        border-radius: 28px;
+      }
+
+      .pm-glow {
+        width: 360px;
+        height: 360px;
+      }
+
+      .pm-bottom {
+        bottom: 15px;
+      }
+
+      .pm-bottom div {
+        font-size: 12px;
+      }
+    }
+
+
+    /* SMALL PHONES */
+
+    @media (max-width: 430px) {
+
+      .pm-brand-icon {
+        width: 38px;
+        height: 38px;
+
+        border-radius: 11px;
+      }
+
+      .pm-brand strong {
+        font-size: 15px;
+      }
+
+      .pm-hero {
+        padding-top: 28px;
+      }
+
+      .pm-hero h1 {
+        font-size: 47px;
+        letter-spacing: -2.8px;
+      }
+
+      .pm-description {
+        font-size: 13px;
+      }
+
+      .pm-features {
+        gap: 12px;
+      }
+
+      .pm-feature {
+        gap: 7px;
+      }
+
+      .pm-feature-icon {
+        width: 29px;
+        height: 29px;
+      }
+
+      .pm-feature strong {
+        font-size: 10px;
+      }
+
+      .pm-feature span {
+        font-size: 8px;
+      }
+
+      .pm-visual {
+        min-height: 350px;
+      }
+
+      .pm-floating-card {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+      }
+    }
+
+  </style>
+
 </body>
 
 </html>

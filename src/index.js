@@ -1,87 +1,213 @@
 import * as deepar from 'deepar';
 
-// Log the version. Just in case.
-console.log("Deepar version: " + deepar.version);
+// Log DeepAR version
+console.log("DeepAR version:", deepar.version);
+
+// ---------------------------------------------------------
+// DOM ELEMENTS
+// ---------------------------------------------------------
 
 const feetText = document.getElementById("feet-text");
 const brandText = document.getElementById("brand-text");
-const selectedEffect = sessionStorage.getItem('selectedEffect');
+const loader = document.getElementById("loader-wrapper");
 
-// If there's a selected effect, initialize DeepAR with that effect
-if (selectedEffect) {
+const selectedEffect = sessionStorage.getItem("selectedEffect");
+
+// ---------------------------------------------------------
+// DEEPAR INITIALIZATION
+// ---------------------------------------------------------
+
+if (selectedEffect && document.getElementById("deepar-canvas")) {
   initializeDeepar(selectedEffect);
 }
-// So we wrap the whole code in an async function that is called immediatly.
+
+// Initialize DeepAR
 async function initializeDeepar(effectName) {
-  feetText.style.display = "none";
-  // Resize the canvas according to screen size. 
-  const canvas = document.getElementById('deepar-canvas');
-  const scale = window.devicePixelRatio || 1;
-  const width = window.innerWidth > window.innerHeight ? Math.floor(window.innerHeight * 0.66) : window.innerWidth;
-  canvas.width = Math.floor(width * scale);
-  canvas.height = Math.floor(window.innerHeight * scale);
-  canvas.style.maxHeight = window.innerHeight + "px";
-  canvas.style.maxWidth = width + "px";
 
-  // Initialize DeepAR.
-  const deepAR = await deepar.initialize({
-    licenseKey: '911c24ddac2e0d44a1d14a091ef7adb832e3465bc4890aaa04a9149a75fdd16ba8f3b9b3d4eadcb6',
-    canvas: canvas,
-    effect: `effects/${effectName}`, // The selected effect file.
-    additionalOptions: {
-      cameraConfig: {
-        facingMode: "environment", // Use the front camera.
-      },
-      hint: "footInit",
-    }
-  }); 
-  // Hide the loading screen.
-  document.getElementById("loader-wrapper").style.display = "none";
-  brandText.style.display="flex";
-  // Register for a callback when feet are detected.
-  deepAR.callbacks.onFeetTracked = (leftFoot, rightFoot) => {
-    const feetText = document.getElementById("feet-text");
-    if (leftFoot.detected || rightFoot.detected) {
+  try {
+
+    // Hide instruction text while DeepAR loads
+    if (feetText) {
       feetText.style.display = "none";
-      deepAR.callbacks.onFeetTracked = undefined;
     }
-  };
 
-  return deepAR;
+    // -------------------------------------------------------
+    // CANVAS
+    // -------------------------------------------------------
+
+    const canvas = document.getElementById("deepar-canvas");
+
+    if (!canvas) {
+      console.error("DeepAR canvas not found.");
+      return;
+    }
+
+    const scale = window.devicePixelRatio || 1;
+
+    const width =
+      window.innerWidth > window.innerHeight
+        ? Math.floor(window.innerHeight * 0.66)
+        : window.innerWidth;
+
+    canvas.width = Math.floor(width * scale);
+    canvas.height = Math.floor(window.innerHeight * scale);
+
+    canvas.style.maxHeight = window.innerHeight + "px";
+    canvas.style.maxWidth = width + "px";
+
+    // -------------------------------------------------------
+    // DEEPAR
+    // -------------------------------------------------------
+
+    const deepAR = await deepar.initialize({
+
+      // IMPORTANT:
+      // Replace this with your active DeepAR license key.
+      licenseKey: "YOUR_DEEPAR_LICENSE_KEY",
+
+      canvas: canvas,
+
+      // Selected shoe effect
+      effect: `effects/${effectName}`,
+
+      additionalOptions: {
+
+        cameraConfig: {
+          // Rear/environment camera
+          facingMode: "environment",
+        },
+
+        // Enable foot tracking
+        hint: "footInit",
+      },
+    });
+
+    console.log("DeepAR initialized successfully.");
+
+    // -------------------------------------------------------
+    // LOADING SCREEN
+    // -------------------------------------------------------
+
+    if (loader) {
+      loader.style.display = "none";
+    }
+
+    // Show brand indicator
+    if (brandText) {
+      brandText.style.display = "flex";
+    }
+
+    // -------------------------------------------------------
+    // FOOT TRACKING
+    // -------------------------------------------------------
+
+    deepAR.callbacks.onFeetTracked = (leftFoot, rightFoot) => {
+
+      const leftDetected = leftFoot?.detected;
+      const rightDetected = rightFoot?.detected;
+
+      if (leftDetected || rightDetected) {
+
+        if (feetText) {
+          feetText.style.display = "none";
+        }
+
+        // Stop callback once feet are detected
+        deepAR.callbacks.onFeetTracked = undefined;
+      }
+    };
+
+    return deepAR;
+
+  } catch (error) {
+
+    console.error("DeepAR initialization failed:", error);
+
+    // Hide loader
+    if (loader) {
+      loader.style.display = "none";
+    }
+
+    // Show useful error to user
+    if (feetText) {
+      feetText.style.display = "block";
+      feetText.textContent =
+        "Unable to start the virtual try-on. Please check your camera permission and try again.";
+    }
+  }
 }
+
+// ---------------------------------------------------------
+// EFFECT NAME
+// ---------------------------------------------------------
+
 function getEffectNameFromCardId(cardId) {
-  // Example implementation: Return different effect names based on card IDs
   return cardId;
 }
 
-// Perform actions when a product card is clicked
+// ---------------------------------------------------------
+// PRODUCT SELECTION
+// ---------------------------------------------------------
+
 function onProductCardClick(cardId) {
-  // Retrieve the effect name based on the selected card ID
+
+  if (!cardId) {
+    return;
+  }
+
   const effectName = getEffectNameFromCardId(cardId);
-  sessionStorage.setItem('selectedEffect', effectName);
-  // Reload DeepAR with the selected effect
+
+  // Save selected DeepAR effect
+  sessionStorage.setItem("selectedEffect", effectName);
+
+  console.log("Selected shoe effect:", effectName);
+
+  // Reload page so DeepAR starts with the new shoe
   window.location.reload();
 }
 
-// Example of adding click event listeners to product cards
-const productCards = document.querySelectorAll('.product-card');
-productCards.forEach(card => {
-  card.addEventListener('click', function() {
-    const cardId = this.id; // Get the ID of the clicked card
+// ---------------------------------------------------------
+// PRODUCT CARD EVENTS
+// ---------------------------------------------------------
+
+const productCards = document.querySelectorAll(".product-card");
+
+productCards.forEach((card) => {
+
+  card.addEventListener("click", function () {
+
+    const cardId = this.id;
+
     onProductCardClick(cardId);
+
   });
+
 });
-try{
-  const startButton = document.getElementById('getStartBtn');
-  
-    // Add a click event listener to the button
-  startButton.addEventListener('click', function() {
-      window.location.href = 'getInfo.html';});
+
+// ---------------------------------------------------------
+// START / SHOW BUTTON NAVIGATION
+// ---------------------------------------------------------
+
+const startButton = document.getElementById("getStartBtn");
+
+if (startButton) {
+
+  startButton.addEventListener("click", () => {
+
+    window.location.href = "getInfo.html";
+
+  });
+
 }
-catch{
-  const showButton = document.getElementById('showBtn');
-  
-  // Add a click event listener to the button
-  showButton.addEventListener('click', function() {
-    window.location.href = 'tryon.html';});
+
+const showButton = document.getElementById("showBtn");
+
+if (showButton) {
+
+  showButton.addEventListener("click", () => {
+
+    window.location.href = "tryon.html";
+
+  });
+
 }
