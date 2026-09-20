@@ -1,4 +1,6 @@
-<script>
+<script type="module">
+  import { upload } from "https://esm.sh/@vercel/blob@2.6.1/client";
+
   const form = document.getElementById("product-form");
   const submitButton = document.getElementById("submit-button");
   const statusBox = document.getElementById("status");
@@ -43,8 +45,8 @@
   }
 
   /*
-   * Convert image to Base64.
-   * Images are normally small enough for the API.
+   * Convert product image to Base64.
+   * The image is normally small enough for the API.
    */
   function fileToBase64(file) {
     return new Promise((resolve, reject) => {
@@ -55,7 +57,9 @@
       };
 
       reader.onerror = () => {
-        reject(new Error(`Could not read ${file.name}`));
+        reject(
+          new Error(`Could not read ${file.name}`)
+        );
       };
 
       reader.readAsDataURL(file);
@@ -63,78 +67,51 @@
   }
 
   /*
-   * Upload DeepAR file directly to Vercel Blob.
+   * Upload .deepar DIRECTLY to Vercel Blob.
+   *
+   * The 11.6 MB file therefore does NOT pass
+   * through /api/add-product.
    */
   async function uploadEffectToBlob(file) {
     showStatus(
-      "Uploading DeepAR effect to secure storage...",
+      "Uploading DeepAR effect...",
       "loading"
     );
 
-    /*
-     * Ask our Vercel API for a client upload token.
-     */
-    const tokenResponse = await fetch(
-      "/api/upload-effect",
+    const blob = await upload(
+      `effects/${Date.now()}-${file.name}`,
+      file,
       {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          filename: file.name,
-          contentType: "application/octet-stream"
-        })
+        access: "private",
+
+        handleUploadUrl:
+          "/api/upload-effect",
+
+        multipart: true,
+
+        onUploadProgress(event) {
+          const progress =
+            Math.round(event.percentage);
+
+          showStatus(
+            `Uploading DeepAR effect... ${progress}%`,
+            "loading"
+          );
+        }
       }
     );
 
-    const tokenData = await tokenResponse.json();
-
-    if (!tokenResponse.ok || !tokenData.token) {
+    if (!blob || !blob.url) {
       throw new Error(
-        tokenData.message ||
-        "Could not prepare DeepAR upload."
+        "DeepAR upload completed but no Blob URL was returned."
       );
     }
 
-    /*
-     * Upload directly from browser to Blob.
-     */
-    const uploadResponse = await fetch(
-      tokenData.uploadUrl,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/octet-stream",
-          "x-vercel-blob-token": tokenData.token
-        },
-        body: file
-      }
-    );
-
-    if (!uploadResponse.ok) {
-      const errorText = await uploadResponse.text();
-
-      throw new Error(
-        errorText ||
-        "DeepAR upload failed."
-      );
-    }
-
-    const blobResult =
-      await uploadResponse.json();
-
-    if (!blobResult.url) {
-      throw new Error(
-        "Blob upload completed but no URL was returned."
-      );
-    }
-
-    return blobResult.url;
+    return blob.url;
   }
 
   /*
-   * Submit product.
+   * Submit product
    */
   form.addEventListener(
     "submit",
@@ -163,6 +140,9 @@
       const effectFile =
         effectInput.files[0];
 
+      /*
+       * Validation
+       */
       if (!name || !price || !description) {
         showStatus(
           "Please fill in all product details.",
@@ -202,7 +182,8 @@
       try {
 
         submitButton.disabled = true;
-        submitButton.textContent = "Uploading...";
+        submitButton.textContent =
+          "Uploading...";
 
         /*
          * Image → Base64
@@ -216,13 +197,17 @@
           await fileToBase64(imageFile);
 
         /*
-         * DeepAR → Blob
+         * DeepAR → Vercel Blob
+         *
+         * IMPORTANT:
+         * The large .deepar file is NOT sent
+         * to /api/add-product.
          */
         const effectBlobUrl =
           await uploadEffectToBlob(effectFile);
 
         /*
-         * Send only the Blob URL + product data
+         * Send product information + Blob URL
          * to our GitHub API.
          */
         showStatus(
@@ -234,33 +219,65 @@
           "/api/add-product",
           {
             method: "POST",
+
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type":
+                "application/json"
             },
+
             body: JSON.stringify({
               name,
               price,
               description,
 
               imageBase64,
-              imageName: imageFile.name,
+              imageName:
+                imageFile.name,
 
               effectBlobUrl,
-              effectName: effectFile.name
+
+              effectName:
+                effectFile.name
             })
           }
         );
 
-        const result =
-          await response.json();
+        /*
+         * Don't blindly call response.json().
+         * This prevents the old:
+         *
+         * Unexpected token 'R'
+         *
+         * error when Vercel returns plain text.
+         */
+        const responseText =
+          await response.text();
 
-        if (!response.ok || !result.success) {
+        let result;
+
+        try {
+          result =
+            JSON.parse(responseText);
+        } catch {
+          throw new Error(
+            responseText ||
+            `Server returned HTTP ${response.status}`
+          );
+        }
+
+        if (
+          !response.ok ||
+          !result.success
+        ) {
           throw new Error(
             result.message ||
             "Product upload failed."
           );
         }
 
+        /*
+         * Success
+         */
         showStatus(
           `Product "${name}" added successfully. GitHub and Vercel will update automatically.`,
           "success"
@@ -276,7 +293,10 @@
 
       } catch (error) {
 
-        console.error(error);
+        console.error(
+          "Product upload error:",
+          error
+        );
 
         showStatus(
           error.message ||
@@ -287,6 +307,7 @@
       } finally {
 
         submitButton.disabled = false;
+
         submitButton.textContent =
           "Add Product";
       }

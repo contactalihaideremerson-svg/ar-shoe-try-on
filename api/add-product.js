@@ -1,4 +1,72 @@
-import { put } from "@vercel/blob";
+import { get } from "@vercel/blob";
+
+const GITHUB_API = "https://api.github.com";
+
+function githubHeaders() {
+  return {
+    Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+    Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+    "Content-Type": "application/json",
+  };
+}
+
+async function getGithubFile(path) {
+  const url =
+    `${GITHUB_API}/repos/${process.env.GITHUB_OWNER}/${process.env.GITHUB_REPO}` +
+    `/contents/${path}`;
+
+  const response = await fetch(url, {
+    headers: githubHeaders(),
+  });
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      return null;
+    }
+
+    const text = await response.text();
+    throw new Error(`GitHub read failed: ${response.status} ${text}`);
+  }
+
+  return response.json();
+}
+
+async function saveGithubFile(path, contentBase64, message, sha) {
+  const url =
+    `${GITHUB_API}/repos/${process.env.GITHUB_OWNER}/${process.env.GITHUB_REPO}` +
+    `/contents/${path}`;
+
+  const body = {
+    message,
+    content: contentBase64,
+  };
+
+  if (sha) {
+    body.sha = sha;
+  }
+
+  const response = await fetch(url, {
+    method: "PUT",
+    headers: githubHeaders(),
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`GitHub write failed: ${response.status} ${text}`);
+  }
+
+  return response.json();
+}
+
+function safeFilename(filename) {
+  return filename
+    .replace(/\\/g, "/")
+    .split("/")
+    .pop()
+    .replace(/[^a-zA-Z0-9._-]/g, "-");
+}
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -15,247 +83,194 @@ export default async function handler(req, res) {
       description,
       imageBase64,
       imageName,
-      effectBlobUrl,
+      effectBlobPathname,
       effectName,
     } = req.body || {};
 
-    if (
-      !name ||
-      !price ||
-      !description ||
-      !imageBase64 ||
-      !imageName ||
-      !effectBlobUrl ||
-      !effectName
-    ) {
+    if (!name || !price || !description) {
       return res.status(400).json({
         success: false,
-        message: "All product fields are required.",
+        message: "Name, price and description are required.",
       });
     }
 
-    const token = process.env.GITHUB_TOKEN;
-    const owner = process.env.GITHUB_OWNER;
-    const repo = process.env.GITHUB_REPO;
-
-    if (!token || !owner || !repo) {
-      return res.status(500).json({
-        success: false,
-        message: "GitHub environment variables are not configured.",
-      });
-    }
-
-    const githubHeaders = {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28",
-    };
-
-    const productId = name
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-
-    if (!productId) {
+    if (!imageBase64 || !imageName) {
       return res.status(400).json({
         success: false,
-        message: "Invalid product name.",
+        message: "Product image is required.",
       });
     }
 
-    const cleanImageName = imageName
-      .split("\\")
-      .pop()
-      .split("/")
-      .pop()
-      .replace(/[^a-zA-Z0-9._-]/g, "-");
-
-    const cleanEffectName = effectName
-      .split("\\")
-      .pop()
-      .split("/")
-      .pop()
-      .replace(/[^a-zA-Z0-9._-]/g, "-");
-
-    if (!cleanEffectName.toLowerCase().endsWith(".deepar")) {
+    if (!effectBlobPathname || !effectName) {
       return res.status(400).json({
         success: false,
-        message: "Effect file must be a .deepar file.",
+        message: "DeepAR effect is required.",
       });
     }
 
-    async function githubRequest(url, options = {}) {
-      const response = await fetch(url, {
-        ...options,
-        headers: {
-          ...githubHeaders,
-          ...(options.headers || {}),
-        },
+    if (!effectName.toLowerCase().endsWith(".deepar")) {
+      return res.status(400).json({
+        success: false,
+        message: "Only .deepar files are allowed.",
       });
-
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(
-          data.message || `GitHub API error: ${response.status}`
-        );
-      }
-
-      return data;
     }
 
-    const githubBase =
-      `https://api.github.com/repos/${owner}/${repo}`;
+    const githubOwner = process.env.GITHUB_OWNER;
+    const githubRepo = process.env.GITHUB_REPO;
+
+    if (!process.env.GITHUB_TOKEN || !githubOwner || !githubRepo) {
+      throw new Error("GitHub environment variables are not configured.");
+    }
 
     /*
-     * 1. Upload product image to GitHub
+     * ---------------------------------------------------------
+     * 1. Get DeepAR file from private Vercel Blob
+     * ---------------------------------------------------------
      */
-    const imagePath =
-      `public/assets/${cleanImageName}`;
 
-    await githubRequest(
-      `${githubBase}/contents/${imagePath}`,
-      {
-        method: "PUT",
-        body: JSON.stringify({
-          message: `Add product image: ${name}`,
-          content: imageBase64,
-          branch: "main",
-        }),
-      }
+    const blobResult = await get(effectBlobPathname, {
+      access: "private",
+    });
+
+    if (!blobResult) {
+      throw new Error("DeepAR file was not found in Vercel Blob.");
+    }
+
+    const effectArrayBuffer = await new Response(
+      blobResult.stream
+    ).arrayBuffer();
+
+    const effectBase64 = Buffer.from(effectArrayBuffer).toString("base64");
+
+    /*
+     * ---------------------------------------------------------
+     * 2. Create safe filenames
+     * ---------------------------------------------------------
+     */
+
+    const cleanImageName = safeFilename(imageName);
+    const cleanEffectName = safeFilename(effectName);
+
+    const imagePath = `public/assets/${Date.now()}-${cleanImageName}`;
+    const effectPath = `public/effects/${cleanEffectName}`;
+
+    /*
+     * ---------------------------------------------------------
+     * 3. Upload product image to GitHub
+     * ---------------------------------------------------------
+     */
+
+    await saveGithubFile(
+      imagePath,
+      imageBase64,
+      `Add product image: ${name}`
     );
 
     /*
-     * 2. Download .deepar from Blob
+     * ---------------------------------------------------------
+     * 4. Upload DeepAR effect to GitHub
+     * ---------------------------------------------------------
      */
-    const blobResponse = await fetch(effectBlobUrl);
 
-    if (!blobResponse.ok) {
-      throw new Error(
-        "Could not download DeepAR effect from Blob storage."
-      );
-    }
+    const existingEffect = await getGithubFile(effectPath);
 
-    const effectArrayBuffer =
-      await blobResponse.arrayBuffer();
-
-    /*
-     * Convert binary effect to Base64
-     */
-    const effectBase64 =
-      Buffer.from(effectArrayBuffer).toString("base64");
-
-    /*
-     * 3. Upload .deepar to GitHub
-     */
-    const effectPath =
-      `public/effects/${cleanEffectName}`;
-
-    await githubRequest(
-      `${githubBase}/contents/${effectPath}`,
-      {
-        method: "PUT",
-        body: JSON.stringify({
-          message: `Add DeepAR effect: ${name}`,
-          content: effectBase64,
-          branch: "main",
-        }),
-      }
+    await saveGithubFile(
+      effectPath,
+      effectBase64,
+      `Add DeepAR effect: ${name}`,
+      existingEffect?.sha
     );
 
     /*
-     * 4. Read products.json
+     * ---------------------------------------------------------
+     * 5. Read products.json
+     *
+     * IMPORTANT:
+     * Actual source file is:
+     * public/data/products.json
+     * ---------------------------------------------------------
      */
-    const productsFile =
-      await githubRequest(
-        `${githubBase}/contents/data/products.json?ref=main`
-      );
 
-    const existingProducts =
-      JSON.parse(
-        Buffer.from(
-          productsFile.content,
-          "base64"
-        ).toString("utf-8")
-      );
+    const productsPath = "public/data/products.json";
 
-    /*
-     * 5. Prevent duplicate products
-     */
-    if (
-      existingProducts.some(
-        (product) => product.id === productId
-      )
-    ) {
-      return res.status(409).json({
-        success: false,
-        message:
-          `A product with ID "${productId}" already exists.`,
-      });
+    const existingProductsFile = await getGithubFile(productsPath);
+
+    let products = [];
+
+    if (existingProductsFile?.content) {
+      const decoded = Buffer.from(
+        existingProductsFile.content,
+        "base64"
+      ).toString("utf8");
+
+      try {
+        products = JSON.parse(decoded);
+      } catch {
+        products = [];
+      }
+    }
+
+    if (!Array.isArray(products)) {
+      products = [];
     }
 
     /*
-     * 6. Create product
+     * ---------------------------------------------------------
+     * 6. Create product object
+     * ---------------------------------------------------------
      */
-    const newProduct = {
-      id: productId,
+
+    const id =
+      `${name.toLowerCase()}-${Date.now()}`
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+
+    const product = {
+      id,
       name,
       price,
       description,
-      image: `assets/${cleanImageName}`,
-      effect: `effects/${cleanEffectName}`,
+      image: imagePath.replace(/^public\//, ""),
+      effect: effectPath.replace(/^public\//, ""),
     };
 
-    existingProducts.push(newProduct);
+    products.push(product);
 
     /*
-     * 7. Update products.json
+     * ---------------------------------------------------------
+     * 7. Save products.json back to GitHub
+     * ---------------------------------------------------------
      */
-    const updatedProducts =
-      JSON.stringify(
-        existingProducts,
-        null,
-        2
-      );
 
-    await githubRequest(
-      `${githubBase}/contents/data/products.json`,
-      {
-        method: "PUT",
-        body: JSON.stringify({
-          message: `Add product: ${name}`,
-          content:
-            Buffer.from(
-              updatedProducts
-            ).toString("base64"),
-          sha: productsFile.sha,
-          branch: "main",
-        }),
-      }
+    const productsContent = JSON.stringify(products, null, 2);
+
+    const productsBase64 =
+      Buffer.from(productsContent, "utf8").toString("base64");
+
+    await saveGithubFile(
+      productsPath,
+      productsBase64,
+      `Add product: ${name}`,
+      existingProductsFile?.sha
     );
 
     /*
-     * 8. Return success
+     * ---------------------------------------------------------
+     * 8. Response
+     * ---------------------------------------------------------
      */
+
     return res.status(200).json({
       success: true,
-      message:
-        "Product added successfully.",
-      product: newProduct,
+      message: "Product added successfully.",
+      product,
     });
-
   } catch (error) {
-    console.error(
-      "Add product error:",
-      error
-    );
+    console.error("ADD PRODUCT ERROR:", error);
 
     return res.status(500).json({
       success: false,
-      message:
-        error.message ||
-        "Failed to add product.",
+      message: error?.message || "Failed to add product.",
     });
   }
 }
