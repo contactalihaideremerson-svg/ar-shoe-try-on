@@ -1,17 +1,21 @@
 const path = require('path');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: './src/index.js',
+
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
   },
+
   target: 'web',
+
   module: {
     rules: [
       {
-        test: /\.(wasm)|(bin)|(obj)$/i,
+        test: /\.(wasm|bin|obj)$/i,
         include: [
           path.resolve(__dirname, 'node_modules/deepar/'),
         ],
@@ -25,23 +29,41 @@ module.exports = {
       },
     ],
   },
+
   resolve: {
     alias: {
       '@effects': path.resolve(__dirname, 'effects/'),
     },
   },
+
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        {
+          from: 'public',
+          to: '.',
+        },
+        {
+          from: 'node_modules/deepar',
+          to: 'deepar-resources',
+        },
+      ],
+    }),
+  ],
+
   performance: {
     maxEntrypointSize: 1000000,
     maxAssetSize: 10000000,
   },
+
   devServer: {
     static: [
       {
-        directory: path.join(__dirname, 'public')
+        directory: path.join(__dirname, 'public'),
       },
       {
         directory: path.join(__dirname, 'node_modules/deepar'),
-        publicPath: "/deepar-resources"
+        publicPath: '/deepar-resources',
       },
     ],
     compress: true,
