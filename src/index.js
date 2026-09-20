@@ -25,7 +25,7 @@ async function initializeDeepar(effectName) {
 
   // Initialize DeepAR.
   const deepAR = await deepar.initialize({
-    licenseKey: 'b98a37541a356069cc7150029aad9ab89a62df4bc7de8f1b82689dd30a2ea69f638a76bb72a8c257',
+    licenseKey: '911c24ddac2e0d44a1d14a091ef7adb832e3465bc4890aaa04a9149a75fdd16ba8f3b9b3d4eadcb6',
     canvas: canvas,
     effect: `effects/${effectName}`, // The selected effect file.
     additionalOptions: {
