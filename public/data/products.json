@@ -1,19 +1,10 @@
-﻿[
+[
   {
-    "id": "khussa",
-    "name": "Traditional Embroidered Khussa",
-    "price": "Custom",
-    "description": "Traditional embroidered khussa with premium detailing.",
-    "image": "assets/khussa.jpg",
-    "effect": "effects/khussa.deepar",
-    "enabled": true
-  },
-  {
-    "id": "76879809-1789961976169",
-    "name": "76879809",
-    "price": "897878",
-    "description": "089",
-    "image": "assets/1789961971091-WhatsApp-Image-2026-09-20-at-10.59.31-PM--1-.jpeg",
-    "effect": "effects/oyqsgfgl.deepar"
+    "id": "khusa-01-1789970803870",
+    "name": "Khusa 01",
+    "price": "2000",
+    "description": "Khusa 01",
+    "image": "assets/1789970794761-WhatsApp-Image-2026-09-21-at-10.15.23-AM.jpeg",
+    "effect": "effects/khusa-try-on-final.deepar"
   }
 ]
