@@ -6,7 +6,7 @@
     "description": "Khusa 01",
     "image": "assets/1789970794761-WhatsApp-Image-2026-09-21-at-10.15.23-AM.jpeg",
     "effect": "effects/khusa-try-on-final.deepar",
-    "enabled": false
+    "enabled": true
   },
   {
     "id": "khusa-02-1789974983615",
