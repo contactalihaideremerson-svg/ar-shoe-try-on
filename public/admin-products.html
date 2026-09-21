@@ -3,27 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Product Manager — AR Shoe Try-On</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     :root {
       --bg: #f5f5f7;
-      --card: #ffffff;
+      --card: #fff;
       --text: #171717;
       --muted: #6b7280;
       --border: #e5e7eb;
-      --black: #111111;
-      --success-bg: #ecfdf5;
-      --success-text: #047857;
-      --error-bg: #fef2f2;
-      --error-text: #b91c1c;
-      --loading-bg: #eff6ff;
-      --loading-text: #1d4ed8;
+      --black: #111;
+      --green: #16a34a;
+      --red: #dc2626;
     }
 
     body {
@@ -31,283 +24,317 @@
       min-height: 100vh;
       background: var(--bg);
       color: var(--text);
-      font-family:
-        Inter,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Helvetica,
-        Arial,
-        sans-serif;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     .admin {
-      width: min(100% - 32px, 920px);
-      margin: 0 auto;
-      padding: 60px 0 80px;
+      width: min(100% - 28px, 1050px);
+      margin: auto;
+      padding: 42px 0 70px;
     }
 
     .header {
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     .eyebrow {
-      display: inline-block;
-      margin-bottom: 10px;
       color: #6b7280;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .1em;
       text-transform: uppercase;
     }
 
     h1 {
-      margin: 0;
-      font-size: clamp(32px, 5vw, 52px);
+      margin: 8px 0 10px;
+      font-size: clamp(32px, 5vw, 48px);
       line-height: 1.05;
-      letter-spacing: -0.04em;
+      letter-spacing: -.04em;
     }
 
     .subtitle {
-      max-width: 650px;
-      margin: 14px 0 0;
+      margin: 0;
+      max-width: 720px;
       color: var(--muted);
-      font-size: 16px;
       line-height: 1.6;
     }
 
     .card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 30px;
-      box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.04),
-        0 2px 8px rgba(0, 0, 0, 0.03);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.04);
+      margin-bottom: 22px;
     }
 
-    .form-grid {
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 750;
+    }
+
+    .section-count {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .products {
+      display: grid;
+      gap: 12px;
+    }
+
+    .product-row {
+      display: grid;
+      grid-template-columns: 70px minmax(0,1fr) auto;
+      align-items: center;
+      gap: 15px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      background: #fafafa;
+    }
+
+    .product-image {
+      width: 70px;
+      height: 70px;
+      border-radius: 13px;
+      object-fit: cover;
+      background: #eee;
+    }
+
+    .product-name {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .product-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .product-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-label {
+      min-width: 44px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      text-align: right;
+    }
+
+    .switch {
+      position: relative;
+      width: 52px;
+      height: 30px;
+      flex: 0 0 auto;
+    }
+
+    .switch input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      cursor: pointer;
+      border-radius: 999px;
+      background: #d1d5db;
+      transition: .2s ease;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,.18);
+      transition: .2s ease;
+    }
+
+    .switch input:checked + .slider {
+      background: var(--green);
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(22px);
+    }
+
+    .add-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 22px;
+      gap: 18px;
     }
 
     .field {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
     }
 
-    .field.full {
-      grid-column: 1 / -1;
-    }
+    .field.full { grid-column: 1 / -1; }
 
     label {
-      font-size: 14px;
-      font-weight: 650;
+      font-size: 13px;
+      font-weight: 700;
     }
 
-    input,
-    textarea {
+    input, textarea {
       width: 100%;
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 13px;
       background: #fafafa;
-      color: var(--text);
+      padding: 13px 14px;
       font: inherit;
       outline: none;
-      transition:
-        border-color 0.2s ease,
-        background 0.2s ease,
-        box-shadow 0.2s ease;
-    }
-
-    input {
-      min-height: 50px;
-      padding: 0 15px;
     }
 
     textarea {
-      min-height: 130px;
-      padding: 14px 15px;
+      min-height: 110px;
       resize: vertical;
     }
 
-    input:focus,
-    textarea:focus {
+    input:focus, textarea:focus {
       background: #fff;
       border-color: #9ca3af;
-      box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.06);
+      box-shadow: 0 0 0 4px rgba(17,17,17,.05);
     }
 
     .file-box {
-      position: relative;
-      min-height: 118px;
-      padding: 18px;
       border: 1px dashed #cbd5e1;
-      border-radius: 16px;
+      border-radius: 14px;
+      padding: 14px;
       background: #fafafa;
-      transition: 0.2s ease;
     }
 
-    .file-box:hover {
-      border-color: #9ca3af;
-      background: #fff;
-    }
-
-    .file-box input[type="file"] {
-      width: 100%;
-      min-height: auto;
+    .file-box input {
       padding: 0;
       border: 0;
       background: transparent;
-      border-radius: 0;
-      box-shadow: none;
     }
 
     .file-info {
-      margin-top: 12px;
+      margin-top: 8px;
       color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
+      font-size: 12px;
       word-break: break-word;
     }
 
-    .hint {
-      margin-top: 7px;
-      color: #9ca3af;
-      font-size: 12px;
-      line-height: 1.5;
+    button {
+      min-height: 48px;
+      border: 0;
+      border-radius: 13px;
+      padding: 0 22px;
+      background: var(--black);
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
     }
 
-    .status {
-      display: none;
-      margin-top: 24px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .status.loading,
-    .status.success,
-    .status.error {
-      display: block;
-    }
-
-    .status.loading {
-      background: var(--loading-bg);
-      color: var(--loading-text);
-    }
-
-    .status.success {
-      background: var(--success-bg);
-      color: var(--success-text);
-    }
-
-    .status.error {
-      background: var(--error-bg);
-      color: var(--error-text);
+    button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
     }
 
     .actions {
       display: flex;
       justify-content: flex-end;
-      margin-top: 26px;
+      margin-top: 20px;
     }
 
-    button {
-      min-height: 50px;
-      padding: 0 24px;
-      border: 0;
-      border-radius: 14px;
-      background: var(--black);
-      color: #fff;
-      font: inherit;
-      font-size: 14px;
-      font-weight: 650;
-      cursor: pointer;
-      transition:
-        transform 0.2s ease,
-        opacity 0.2s ease;
-    }
-
-    button:hover:not(:disabled) {
-      transform: translateY(-1px);
-    }
-
-    button:disabled {
-      cursor: not-allowed;
-      opacity: 0.55;
-    }
-
-    .footer-note {
+    .status {
+      display: none;
       margin-top: 18px;
-      color: #9ca3af;
-      font-size: 12px;
-      line-height: 1.5;
+      padding: 13px 15px;
+      border-radius: 13px;
+      font-size: 13px;
+    }
+
+    .status.show { display: block; }
+    .status.loading { background: #eff6ff; color: #1d4ed8; }
+    .status.success { background: #ecfdf5; color: #047857; }
+    .status.error { background: #fef2f2; color: #b91c1c; }
+
+    .empty {
+      padding: 25px;
       text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--border);
+      border-radius: 16px;
     }
 
     @media (max-width: 700px) {
-      .admin {
-        width: min(100% - 22px, 920px);
-        padding: 30px 0 50px;
-      }
-
-      .card {
-        padding: 20px;
-        border-radius: 20px;
-      }
-
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .field.full {
-        grid-column: auto;
-      }
-
-      .actions {
-        display: block;
-      }
-
-      button {
-        width: 100%;
-      }
+      .admin { width: min(100% - 18px, 1050px); padding-top: 25px; }
+      .card { padding: 17px; border-radius: 18px; }
+      .add-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .product-row { grid-template-columns: 56px minmax(0,1fr) auto; gap: 10px; }
+      .product-image { width: 56px; height: 56px; }
+      .product-meta { font-size: 11px; }
+      .status-label { display: none; }
+      .actions button { width: 100%; }
     }
   </style>
 </head>
 
 <body>
-
   <main class="admin">
 
     <header class="header">
       <span class="eyebrow">AR Shoe Try-On</span>
-
       <h1>Product Manager</h1>
-
       <p class="subtitle">
-        Add a new shoe product, upload its product image and connect
-        the DeepAR try-on effect. Products are saved to GitHub and
-        deployed automatically through Vercel.
+        Manage your AR shoe catalog. Turn products ON to show them in the
+        customer try-on experience, or OFF to hide them without deleting them.
       </p>
     </header>
 
+    <!-- EXISTING PRODUCTS -->
     <section class="card">
+      <div class="section-head">
+        <div class="section-title">Existing Products</div>
+        <div id="product-count" class="section-count">Loading...</div>
+      </div>
+
+      <div id="products" class="products">
+        <div class="empty">Loading products...</div>
+      </div>
+
+      <div id="list-status" class="status"></div>
+    </section>
+
+    <!-- ADD PRODUCT -->
+    <section class="card">
+      <div class="section-head">
+        <div class="section-title">Add New Product</div>
+      </div>
 
       <form id="product-form">
+        <div class="add-grid">
 
-        <div class="form-grid">
-
-          <!-- Product Name -->
           <div class="field">
-            <label for="product-name">
-              Product Name
-            </label>
-
+            <label for="product-name">Product Name</label>
             <input
               id="product-name"
               type="text"
@@ -316,12 +343,8 @@
             />
           </div>
 
-          <!-- Price -->
           <div class="field">
-            <label for="product-price">
-              Price
-            </label>
-
+            <label for="product-price">Price</label>
             <input
               id="product-price"
               type="text"
@@ -330,617 +353,503 @@
             />
           </div>
 
-          <!-- Description -->
           <div class="field full">
-            <label for="product-description">
-              Description
-            </label>
-
+            <label for="product-description">Description</label>
             <textarea
               id="product-description"
-              placeholder="Describe the shoe, material, style and other product details..."
+              placeholder="Describe the shoe..."
               required
             ></textarea>
           </div>
 
-          <!-- Product Image -->
           <div class="field">
-
-            <label for="product-image">
-              Product Image
-            </label>
-
+            <label for="product-image">Product Image</label>
             <div class="file-box">
-
               <input
                 id="product-image"
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 required
               />
-
-              <div
-                id="image-info"
-                class="file-info"
-              >
+              <div id="image-info" class="file-info">
                 No image selected
               </div>
-
-              <div class="hint">
-                JPG, PNG or WebP. Maximum 2.5 MB.
-              </div>
-
             </div>
-
           </div>
 
-          <!-- DeepAR Effect -->
           <div class="field">
-
-            <label for="product-effect">
-              DeepAR Effect
-            </label>
-
+            <label for="product-effect">DeepAR Effect</label>
             <div class="file-box">
-
               <input
                 id="product-effect"
                 type="file"
                 accept=".deepar,application/octet-stream"
                 required
               />
-
-              <div
-                id="effect-info"
-                class="file-info"
-              >
+              <div id="effect-info" class="file-info">
                 No .deepar file selected
               </div>
-
-              <div class="hint">
-                Upload the exported DeepAR shoe try-on effect.
-              </div>
-
             </div>
-
           </div>
 
         </div>
 
-        <!-- Status -->
-        <div
-          id="status"
-          class="status"
-          role="status"
-          aria-live="polite"
-        ></div>
+        <div id="status" class="status"></div>
 
-        <!-- Submit -->
         <div class="actions">
-
-          <button
-            id="submit-button"
-            type="submit"
-          >
+          <button id="submit-button" type="submit">
             Add Product
           </button>
-
         </div>
-
       </form>
-
     </section>
-
-    <div class="footer-note">
-      DeepAR files are uploaded directly to private Vercel Blob storage.
-    </div>
 
   </main>
 
-
   <script type="module">
-
     import {
       upload
     } from "https://esm.sh/@vercel/blob@2.6.1/client";
 
+    const form = document.getElementById("product-form");
+    const submitButton = document.getElementById("submit-button");
+    const statusBox = document.getElementById("status");
 
-    /*
-     * ---------------------------------------------------------
-     * ELEMENTS
-     * ---------------------------------------------------------
-     */
+    const productsBox = document.getElementById("products");
+    const productCount = document.getElementById("product-count");
+    const listStatus = document.getElementById("list-status");
 
-    const form =
-      document.getElementById("product-form");
+    const imageInput = document.getElementById("product-image");
+    const effectInput = document.getElementById("product-effect");
+    const imageInfo = document.getElementById("image-info");
+    const effectInfo = document.getElementById("effect-info");
 
-    const submitButton =
-      document.getElementById("submit-button");
-
-    const statusBox =
-      document.getElementById("status");
-
-    const imageInput =
-      document.getElementById("product-image");
-
-    const effectInput =
-      document.getElementById("product-effect");
-
-    const imageInfo =
-      document.getElementById("image-info");
-
-    const effectInfo =
-      document.getElementById("effect-info");
-
-
-    /*
-     * ---------------------------------------------------------
-     * FILE SIZE
-     * ---------------------------------------------------------
-     */
+    function showStatus(element, message, type) {
+      element.textContent = message;
+      element.className = `status show ${type}`;
+    }
 
     function formatFileSize(bytes) {
-
-      if (bytes < 1024) {
-        return `${bytes} B`;
-      }
-
+      if (bytes < 1024) return `${bytes} B`;
       if (bytes < 1024 * 1024) {
         return `${(bytes / 1024).toFixed(1)} KB`;
       }
-
       return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
     }
 
+    imageInput.addEventListener("change", () => {
+      const file = imageInput.files[0];
+      imageInfo.textContent = file
+        ? `${file.name} (${formatFileSize(file.size)})`
+        : "No image selected";
+    });
 
-    /*
-     * ---------------------------------------------------------
-     * STATUS
-     * ---------------------------------------------------------
-     */
-
-    function showStatus(message, type) {
-
-      statusBox.textContent = message;
-
-      statusBox.className =
-        `status ${type}`;
-    }
-
-
-    /*
-     * ---------------------------------------------------------
-     * FILE INFORMATION
-     * ---------------------------------------------------------
-     */
-
-    imageInput.addEventListener(
-      "change",
-      function () {
-
-        const file =
-          this.files[0];
-
-        imageInfo.textContent =
-          file
-            ? `${file.name} (${formatFileSize(file.size)})`
-            : "No image selected";
-      }
-    );
-
-
-    effectInput.addEventListener(
-      "change",
-      function () {
-
-        const file =
-          this.files[0];
-
-        effectInfo.textContent =
-          file
-            ? `${file.name} (${formatFileSize(file.size)})`
-            : "No .deepar file selected";
-      }
-    );
-
-
-    /*
-     * ---------------------------------------------------------
-     * IMAGE → BASE64
-     * ---------------------------------------------------------
-     */
+    effectInput.addEventListener("change", () => {
+      const file = effectInput.files[0];
+      effectInfo.textContent = file
+        ? `${file.name} (${formatFileSize(file.size)})`
+        : "No .deepar file selected";
+    });
 
     function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
 
-      return new Promise(
-        (resolve, reject) => {
+        reader.onload = () => {
+          const result = reader.result;
 
-          const reader =
-            new FileReader();
+          if (typeof result !== "string") {
+            reject(new Error("Could not read image."));
+            return;
+          }
 
-          reader.onload = () => {
+          resolve(result.split(",")[1]);
+        };
 
-            const result =
-              reader.result;
+        reader.onerror = () => {
+          reject(new Error(`Could not read ${file.name}`));
+        };
 
-            if (
-              typeof result !== "string"
-            ) {
-              reject(
-                new Error(
-                  "Could not read image."
-                )
-              );
-
-              return;
-            }
-
-            resolve(
-              result.split(",")[1]
-            );
-          };
-
-          reader.onerror = () => {
-
-            reject(
-              new Error(
-                `Could not read ${file.name}`
-              )
-            );
-          };
-
-          reader.readAsDataURL(file);
-        }
-      );
+        reader.readAsDataURL(file);
+      });
     }
 
-
-    /*
-     * ---------------------------------------------------------
-     * DEEPAR → PRIVATE VERCEL BLOB
-     * ---------------------------------------------------------
-     */
-
     async function uploadEffectToBlob(file) {
-
       showStatus(
+        statusBox,
         "Uploading DeepAR effect...",
         "loading"
       );
 
-      const blob =
-        await upload(
-          `effects/${Date.now()}-${file.name}`,
-          file,
-          {
-            access: "private",
+      const blob = await upload(
+        `effects/${Date.now()}-${file.name}`,
+        file,
+        {
+          access: "private",
+          handleUploadUrl: "/api/upload-effect",
+          multipart: true,
 
-            handleUploadUrl:
-              "/api/upload-effect",
+          onUploadProgress(event) {
+            const progress = Math.round(
+              event.percentage || 0
+            );
 
-            multipart: true,
-
-            onUploadProgress(event) {
-
-              const progress =
-                Math.round(
-                  event.percentage || 0
-                );
-
-              showStatus(
-                `Uploading DeepAR effect... ${progress}%`,
-                "loading"
-              );
-            }
+            showStatus(
+              statusBox,
+              `Uploading DeepAR effect... ${progress}%`,
+              "loading"
+            );
           }
-        );
+        }
+      );
 
-
-      if (
-        !blob ||
-        !blob.pathname
-      ) {
-
+      if (!blob || !blob.pathname) {
         throw new Error(
           "DeepAR upload completed but no Blob pathname was returned."
         );
       }
 
-
-      /*
-       * Private Blob:
-       * send pathname, not URL.
-       */
-
       return blob.pathname;
     }
 
+    async function loadProducts() {
+      try {
+        const response = await fetch(
+          `/data/products.json?t=${Date.now()}`,
+          { cache: "no-store" }
+        );
 
-    /*
-     * ---------------------------------------------------------
-     * FORM SUBMIT
-     * ---------------------------------------------------------
-     */
-
-    form.addEventListener(
-      "submit",
-      async function (event) {
-
-        event.preventDefault();
-
-
-        const name =
-          document
-            .getElementById("product-name")
-            .value
-            .trim();
-
-
-        const price =
-          document
-            .getElementById("product-price")
-            .value
-            .trim();
-
-
-        const description =
-          document
-            .getElementById("product-description")
-            .value
-            .trim();
-
-
-        const imageFile =
-          imageInput.files[0];
-
-
-        const effectFile =
-          effectInput.files[0];
-
-
-        /*
-         * -----------------------------------------------------
-         * VALIDATION
-         * -----------------------------------------------------
-         */
-
-        if (
-          !name ||
-          !price ||
-          !description
-        ) {
-
-          showStatus(
-            "Please fill in all product details.",
-            "error"
+        if (!response.ok) {
+          throw new Error(
+            `Could not load products: ${response.status}`
           );
+        }
 
+        const products = await response.json();
+
+        if (!Array.isArray(products)) {
+          throw new Error(
+            "products.json must contain an array."
+          );
+        }
+
+        productCount.textContent =
+          `${products.length} product${products.length === 1 ? "" : "s"}`;
+
+        if (!products.length) {
+          productsBox.innerHTML =
+            `<div class="empty">No products found.</div>`;
           return;
         }
 
+        productsBox.innerHTML = "";
 
-        if (!imageFile) {
+        products.forEach((product) => {
+          const row = document.createElement("div");
+          row.className = "product-row";
 
-          showStatus(
-            "Please select a product image.",
-            "error"
-          );
+          const image = document.createElement("img");
+          image.className = "product-image";
+          image.src = product.image || "";
+          image.alt = product.name || "Product";
+          image.onerror = () => {
+            image.style.visibility = "hidden";
+          };
 
-          return;
-        }
+          const info = document.createElement("div");
 
+          const name = document.createElement("div");
+          name.className = "product-name";
+          name.textContent = product.name || "Unnamed product";
 
-        if (!effectFile) {
+          const meta = document.createElement("div");
+          meta.className = "product-meta";
+          meta.textContent =
+            `${product.price || ""} • ${product.enabled === false ? "Hidden" : "Visible"}`;
 
-          showStatus(
-            "Please select a .deepar effect file.",
-            "error"
-          );
+          info.appendChild(name);
+          info.appendChild(meta);
 
-          return;
-        }
+          const actions = document.createElement("div");
+          actions.className = "product-actions";
 
+          const label = document.createElement("span");
+          label.className = "status-label";
+          label.textContent =
+            product.enabled === false ? "OFF" : "ON";
 
-        if (
-          !effectFile.name
-            .toLowerCase()
-            .endsWith(".deepar")
-        ) {
+          const switchLabel = document.createElement("label");
+          switchLabel.className = "switch";
 
-          showStatus(
-            "The selected effect must be a .deepar file.",
-            "error"
-          );
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked =
+            product.enabled !== false;
 
-          return;
-        }
+          const slider = document.createElement("span");
+          slider.className = "slider";
 
+          checkbox.addEventListener("change", async () => {
+            const newState = checkbox.checked;
 
-        /*
-         * Keep image small enough for
-         * Vercel Function request.
-         */
+            checkbox.disabled = true;
 
-        if (
-          imageFile.size >
-          2.5 * 1024 * 1024
-        ) {
+            label.textContent =
+              newState ? "ON" : "OFF";
 
-          showStatus(
-            "Product image must be smaller than 2.5 MB.",
-            "error"
-          );
+            meta.textContent =
+              `${product.price || ""} • ${newState ? "Visible" : "Hidden"}`;
 
-          return;
-        }
-
-
-        try {
-
-          submitButton.disabled = true;
-
-          submitButton.textContent =
-            "Uploading...";
-
-
-          /*
-           * ---------------------------------------------------
-           * IMAGE
-           * ---------------------------------------------------
-           */
-
-          showStatus(
-            "Preparing product image...",
-            "loading"
-          );
-
-
-          const imageBase64 =
-            await fileToBase64(
-              imageFile
+            showStatus(
+              listStatus,
+              `${product.name} is being ${newState ? "enabled" : "disabled"}...`,
+              "loading"
             );
 
-
-          /*
-           * ---------------------------------------------------
-           * DEEPAR
-           * ---------------------------------------------------
-           */
-
-          const effectBlobPathname =
-            await uploadEffectToBlob(
-              effectFile
-            );
-
-
-          /*
-           * ---------------------------------------------------
-           * GITHUB
-           * ---------------------------------------------------
-           */
-
-          showStatus(
-            "Adding product to GitHub...",
-            "loading"
-          );
-
-
-          const response =
-            await fetch(
-              "/api/add-product",
-              {
-                method: "POST",
-
-                headers: {
-                  "Content-Type":
-                    "application/json"
-                },
-
-                body: JSON.stringify({
-                  name,
-                  price,
-                  description,
-
-                  imageBase64,
-
-                  imageName:
-                    imageFile.name,
-
-                  effectBlobPathname,
-
-                  effectName:
-                    effectFile.name
-                })
-              }
-            );
-
-
-          const responseText =
-            await response.text();
-
-
-          let result;
-
-
-          try {
-
-            result =
-              JSON.parse(
-                responseText
+            try {
+              const response = await fetch(
+                "/api/update-product",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify({
+                    id: product.id,
+                    enabled: newState
+                  })
+                }
               );
 
-          } catch {
+              const result = await response.json();
 
-            throw new Error(
-              responseText ||
-              `Server returned HTTP ${response.status}`
-            );
+              if (!response.ok || !result.success) {
+                throw new Error(
+                  result.message ||
+                  "Could not update product."
+                );
+              }
+
+              product.enabled = newState;
+
+              showStatus(
+                listStatus,
+                `${product.name} is now ${newState ? "ON and visible" : "OFF and hidden"}.`,
+                "success"
+              );
+
+            } catch (error) {
+              checkbox.checked = !newState;
+
+              label.textContent =
+                !newState ? "ON" : "OFF";
+
+              meta.textContent =
+                `${product.price || ""} • ${!newState ? "Visible" : "Hidden"}`;
+
+              showStatus(
+                listStatus,
+                error.message ||
+                  "Failed to update product.",
+                "error"
+              );
+            } finally {
+              checkbox.disabled = false;
+            }
+          });
+
+          switchLabel.appendChild(checkbox);
+          switchLabel.appendChild(slider);
+
+          actions.appendChild(label);
+          actions.appendChild(switchLabel);
+
+          row.appendChild(image);
+          row.appendChild(info);
+          row.appendChild(actions);
+
+          productsBox.appendChild(row);
+        });
+
+      } catch (error) {
+        productsBox.innerHTML =
+          `<div class="empty">${error.message}</div>`;
+
+        productCount.textContent = "Unable to load";
+      }
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const name =
+        document.getElementById("product-name")
+          .value.trim();
+
+      const price =
+        document.getElementById("product-price")
+          .value.trim();
+
+      const description =
+        document.getElementById("product-description")
+          .value.trim();
+
+      const imageFile =
+        imageInput.files[0];
+
+      const effectFile =
+        effectInput.files[0];
+
+      if (!name || !price || !description) {
+        showStatus(
+          statusBox,
+          "Please fill in all product details.",
+          "error"
+        );
+        return;
+      }
+
+      if (!imageFile) {
+        showStatus(
+          statusBox,
+          "Please select a product image.",
+          "error"
+        );
+        return;
+      }
+
+      if (!effectFile) {
+        showStatus(
+          statusBox,
+          "Please select a .deepar effect file.",
+          "error"
+        );
+        return;
+      }
+
+      if (
+        !effectFile.name
+          .toLowerCase()
+          .endsWith(".deepar")
+      ) {
+        showStatus(
+          statusBox,
+          "The selected effect must be a .deepar file.",
+          "error"
+        );
+        return;
+      }
+
+      if (
+        imageFile.size >
+        2.5 * 1024 * 1024
+      ) {
+        showStatus(
+          statusBox,
+          "Product image must be smaller than 2.5 MB.",
+          "error"
+        );
+        return;
+      }
+
+      try {
+        submitButton.disabled = true;
+        submitButton.textContent = "Uploading...";
+
+        showStatus(
+          statusBox,
+          "Preparing product image...",
+          "loading"
+        );
+
+        const imageBase64 =
+          await fileToBase64(imageFile);
+
+        const effectBlobPathname =
+          await uploadEffectToBlob(effectFile);
+
+        showStatus(
+          statusBox,
+          "Adding product to GitHub...",
+          "loading"
+        );
+
+        const response = await fetch(
+          "/api/add-product",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              name,
+              price,
+              description,
+              imageBase64,
+              imageName: imageFile.name,
+              effectBlobPathname,
+              effectName: effectFile.name
+            })
           }
+        );
 
+        const responseText =
+          await response.text();
 
-          if (
-            !response.ok ||
-            !result.success
-          ) {
+        let result;
 
-            throw new Error(
-              result.message ||
-              "Product upload failed."
-            );
-          }
-
-
-          /*
-           * ---------------------------------------------------
-           * SUCCESS
-           * ---------------------------------------------------
-           */
-
-          showStatus(
-            `Product "${name}" added successfully. GitHub and Vercel will update automatically.`,
-            "success"
+        try {
+          result = JSON.parse(responseText);
+        } catch {
+          throw new Error(
+            responseText ||
+            `Server returned HTTP ${response.status}`
           );
-
-
-          form.reset();
-
-
-          imageInfo.textContent =
-            "No image selected";
-
-
-          effectInfo.textContent =
-            "No .deepar file selected";
-
-
-        } catch (error) {
-
-          console.error(
-            "Product upload error:",
-            error
-          );
-
-
-          showStatus(
-            error?.message ||
-            "Something went wrong while adding the product.",
-            "error"
-          );
-
-
-        } finally {
-
-          submitButton.disabled =
-            false;
-
-          submitButton.textContent =
-            "Add Product";
         }
 
+        if (!response.ok || !result.success) {
+          throw new Error(
+            result.message ||
+            "Product upload failed."
+          );
+        }
+
+        showStatus(
+          statusBox,
+          `Product "${name}" added successfully and is ON by default.`,
+          "success"
+        );
+
+        form.reset();
+
+        imageInfo.textContent =
+          "No image selected";
+
+        effectInfo.textContent =
+          "No .deepar file selected";
+
+        await loadProducts();
+
+      } catch (error) {
+        console.error(
+          "Product upload error:",
+          error
+        );
+
+        showStatus(
+          statusBox,
+          error.message ||
+            "Something went wrong while adding the product.",
+          "error"
+        );
+
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Add Product";
       }
-    );
+    });
 
+    loadProducts();
   </script>
-
 </body>
 </html>

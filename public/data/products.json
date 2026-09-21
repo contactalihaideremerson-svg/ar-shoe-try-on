@@ -1,11 +1,12 @@
-[
+﻿[
   {
     "id": "khussa",
     "name": "Traditional Embroidered Khussa",
     "price": "Custom",
     "description": "Traditional embroidered khussa with premium detailing.",
     "image": "assets/khussa.jpg",
-    "effect": "effects/khussa.deepar"
+    "effect": "effects/khussa.deepar",
+    "enabled": true
   },
   {
     "id": "76879809-1789961976169",

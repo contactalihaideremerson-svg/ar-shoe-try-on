@@ -1,136 +1,260 @@
-import * as deepar from 'deepar';
+import * as deepar from "deepar";
 
-// Log DeepAR version
 console.log("DeepAR version:", deepar.version);
 
 // ---------------------------------------------------------
 // DOM ELEMENTS
 // ---------------------------------------------------------
 
-const feetText = document.getElementById("feet-text");
-const brandText = document.getElementById("brand-text");
-const loader = document.getElementById("loader-wrapper");
+const feetText =
+  document.getElementById("feet-text");
 
-const selectedEffect = sessionStorage.getItem("selectedEffect");
+const brandText =
+  document.getElementById("brand-text");
+
+const loader =
+  document.getElementById("loader-wrapper");
+
+const canvas =
+  document.getElementById("deepar-canvas");
+
+const selectedEffect =
+  sessionStorage.getItem("selectedEffect");
+
+// ---------------------------------------------------------
+// PRODUCT DATA
+// ---------------------------------------------------------
+
+const PRODUCT_DATA_URL =
+  "data/products.json";
+
+// ---------------------------------------------------------
+// EFFECT PATH NORMALIZER
+// ---------------------------------------------------------
+
+function normalizeEffectPath(effectName) {
+  if (!effectName) {
+    return "";
+  }
+
+  const value =
+    String(effectName).trim();
+
+  if (value.startsWith("effects/")) {
+    return value;
+  }
+
+  return `effects/${value}`;
+}
 
 // ---------------------------------------------------------
 // DEEPAR INITIALIZATION
 // ---------------------------------------------------------
 
-if (selectedEffect && document.getElementById("deepar-canvas")) {
-  initializeDeepar(selectedEffect);
+console.log(
+  "Selected effect on page load:",
+  selectedEffect
+);
+
+console.log(
+  "DeepAR canvas found:",
+  !!canvas
+);
+
+if (canvas && selectedEffect) {
+  console.log(
+    "Starting DeepAR with effect:",
+    selectedEffect
+  );
+
+  initializeDeepar(
+    selectedEffect
+  );
+} else {
+  console.log(
+    "No effect selected yet. Waiting for product selection."
+  );
+
+  if (loader) {
+    loader.style.display =
+      "none";
+  }
 }
 
-// Initialize DeepAR
-async function initializeDeepar(effectName) {
+// ---------------------------------------------------------
+// INITIALIZE DEEPAR
+// ---------------------------------------------------------
 
+async function initializeDeepar(
+  effectName
+) {
   try {
-
-    // Hide instruction text while DeepAR loads
     if (feetText) {
-      feetText.style.display = "none";
+      feetText.style.display =
+        "none";
     }
 
-    // -------------------------------------------------------
-    // CANVAS
-    // -------------------------------------------------------
-
-    const canvas = document.getElementById("deepar-canvas");
-
     if (!canvas) {
-      console.error("DeepAR canvas not found.");
+      console.error(
+        "DeepAR canvas not found."
+      );
+
+      if (loader) {
+        loader.style.display =
+          "none";
+      }
+
       return;
     }
 
-    const scale = window.devicePixelRatio || 1;
+    // -------------------------------------------------------
+    // FULL SCREEN RESPONSIVE CANVAS
+    // -------------------------------------------------------
 
-    const width =
-      window.innerWidth > window.innerHeight
-        ? Math.floor(window.innerHeight * 0.66)
-        : window.innerWidth;
+    const scale =
+      window.devicePixelRatio || 1;
 
-    canvas.width = Math.floor(width * scale);
-    canvas.height = Math.floor(window.innerHeight * scale);
+    const viewportWidth =
+      window.innerWidth;
 
-    canvas.style.maxHeight = window.innerHeight + "px";
-    canvas.style.maxWidth = width + "px";
+    const viewportHeight =
+      window.innerHeight;
+
+    canvas.width =
+      Math.floor(
+        viewportWidth * scale
+      );
+
+    canvas.height =
+      Math.floor(
+        viewportHeight * scale
+      );
+
+    canvas.style.width =
+      "100vw";
+
+    canvas.style.height =
+      "100vh";
+
+    canvas.style.maxWidth =
+      "none";
+
+    canvas.style.maxHeight =
+      "none";
+
+    // -------------------------------------------------------
+    // EFFECT PATH
+    // -------------------------------------------------------
+
+    const effectPath =
+      normalizeEffectPath(
+        effectName
+      );
+
+    console.log(
+      "Loading DeepAR effect:",
+      effectPath
+    );
 
     // -------------------------------------------------------
     // DEEPAR
     // -------------------------------------------------------
 
-    const deepAR = await deepar.initialize({
+    const deepAR =
+      await deepar.initialize({
+        licenseKey:
+          "911c24ddac2e0d44a1d14a091ef7adb832e3465bc4890aaa04a9149a75fdd16ba8f3b9b3d4eadcb6",
 
-      // IMPORTANT:
-      // Replace this with your active DeepAR license key.
-      licenseKey: "911c24ddac2e0d44a1d14a091ef7adb832e3465bc4890aaa04a9149a75fdd16ba8f3b9b3d4eadcb6",
+        canvas:
+          canvas,
 
-      canvas: canvas,
+        effect:
+          effectPath,
 
-      // Selected shoe effect
-      effect: `effects/${effectName}`,
+        additionalOptions: {
+          cameraConfig: {
+            facingMode:
+              "environment",
+          },
 
-      additionalOptions: {
-
-        cameraConfig: {
-          // Rear/environment camera
-          facingMode: "environment",
+          hint:
+            "footInit",
         },
+      });
 
-        // Enable foot tracking
-        hint: "footInit",
-      },
-    });
+    console.log(
+      "DeepAR initialized successfully."
+    );
 
-    console.log("DeepAR initialized successfully.");
+    console.log(
+      "Active effect:",
+      effectPath
+    );
 
     // -------------------------------------------------------
-    // LOADING SCREEN
+    // HIDE LOADER
     // -------------------------------------------------------
 
     if (loader) {
-      loader.style.display = "none";
+      loader.style.display =
+        "none";
     }
 
-    // Show brand indicator
+    // -------------------------------------------------------
+    // SHOW BRAND
+    // -------------------------------------------------------
+
     if (brandText) {
-      brandText.style.display = "flex";
+      brandText.style.display =
+        "flex";
     }
 
     // -------------------------------------------------------
     // FOOT TRACKING
     // -------------------------------------------------------
 
-    deepAR.callbacks.onFeetTracked = (leftFoot, rightFoot) => {
+    deepAR.callbacks.onFeetTracked =
+      (
+        leftFoot,
+        rightFoot
+      ) => {
+        const leftDetected =
+          leftFoot?.detected;
 
-      const leftDetected = leftFoot?.detected;
-      const rightDetected = rightFoot?.detected;
+        const rightDetected =
+          rightFoot?.detected;
 
-      if (leftDetected || rightDetected) {
+        if (
+          leftDetected ||
+          rightDetected
+        ) {
+          if (feetText) {
+            feetText.style.display =
+              "none";
+          }
 
-        if (feetText) {
-          feetText.style.display = "none";
+          deepAR.callbacks.onFeetTracked =
+            undefined;
         }
-
-        // Stop callback once feet are detected
-        deepAR.callbacks.onFeetTracked = undefined;
-      }
-    };
+      };
 
     return deepAR;
 
   } catch (error) {
+    console.error(
+      "DeepAR initialization failed:",
+      error
+    );
 
-    console.error("DeepAR initialization failed:", error);
-
-    // Hide loader
     if (loader) {
-      loader.style.display = "none";
+      loader.style.display =
+        "none";
     }
 
-    // Show useful error to user
     if (feetText) {
-      feetText.style.display = "block";
+      feetText.style.display =
+        "block";
+
       feetText.textContent =
         "Unable to start the virtual try-on. Please check your camera permission and try again.";
     }
@@ -138,76 +262,413 @@ async function initializeDeepar(effectName) {
 }
 
 // ---------------------------------------------------------
-// EFFECT NAME
+// GET EFFECT FROM PRODUCT CARD
 // ---------------------------------------------------------
 
-function getEffectNameFromCardId(cardId) {
-  return cardId;
+function getEffectNameFromCard(
+  card
+) {
+  if (!card) {
+    return "";
+  }
+
+  const dataEffect =
+    card.getAttribute(
+      "data-effect"
+    );
+
+  if (dataEffect) {
+    return dataEffect;
+  }
+
+  return card.id || "";
 }
 
 // ---------------------------------------------------------
 // PRODUCT SELECTION
 // ---------------------------------------------------------
 
-function onProductCardClick(cardId) {
-
-  if (!cardId) {
+function onProductCardClick(
+  card
+) {
+  if (!card) {
     return;
   }
 
-  const effectName = getEffectNameFromCardId(cardId);
+  const effectName =
+    getEffectNameFromCard(
+      card
+    );
 
-  // Save selected DeepAR effect
-  sessionStorage.setItem("selectedEffect", effectName);
+  if (!effectName) {
+    console.warn(
+      "No DeepAR effect found for product:",
+      card
+    );
 
-  console.log("Selected shoe effect:", effectName);
+    return;
+  }
 
-  // Reload page so DeepAR starts with the new shoe
+  console.log(
+    "Selected product:",
+    card
+  );
+
+  console.log(
+    "Selected effect:",
+    effectName
+  );
+
+  // Save selected effect
+  sessionStorage.setItem(
+    "selectedEffect",
+    effectName
+  );
+
+  console.log(
+    "Effect saved to sessionStorage:",
+    sessionStorage.getItem(
+      "selectedEffect"
+    )
+  );
+
+  // Reload so DeepAR starts
+  // with selected shoe
   window.location.reload();
 }
 
 // ---------------------------------------------------------
-// PRODUCT CARD EVENTS
+// ATTACH PRODUCT CARD EVENTS
 // ---------------------------------------------------------
 
-const productCards = document.querySelectorAll(".product-card");
+function attachProductCardEvents() {
+  const productCards =
+    document.querySelectorAll(
+      ".product-card"
+    );
 
-productCards.forEach((card) => {
+  productCards.forEach(
+    (card) => {
 
-  card.addEventListener("click", function () {
+      if (
+        card.dataset
+          .deepARListener ===
+        "true"
+      ) {
+        return;
+      }
 
-    const cardId = this.id;
+      card.dataset
+        .deepARListener =
+        "true";
 
-    onProductCardClick(cardId);
+      card.addEventListener(
+        "click",
+        function () {
+          onProductCardClick(
+            this
+          );
+        }
+      );
+    }
+  );
 
-  });
-
-});
-
-// ---------------------------------------------------------
-// START / SHOW BUTTON NAVIGATION
-// ---------------------------------------------------------
-
-const startButton = document.getElementById("getStartBtn");
-
-if (startButton) {
-
-  startButton.addEventListener("click", () => {
-
-    window.location.href = "getInfo.html";
-
-  });
-
+  console.log(
+    `Attached DeepAR listeners to ${productCards.length} product cards.`
+  );
 }
 
-const showButton = document.getElementById("showBtn");
+// ---------------------------------------------------------
+// CREATE DYNAMIC PRODUCT CARD
+// ---------------------------------------------------------
+
+function createProductCard(
+  product
+) {
+  if (!product) {
+    return null;
+  }
+
+  if (!product.effect) {
+    console.warn(
+      "Product has no DeepAR effect:",
+      product
+    );
+
+    return null;
+  }
+
+  const wrapper =
+    document.createElement(
+      "div"
+    );
+
+  wrapper.className =
+    "col";
+
+  const effectPath =
+    product.effect;
+
+  const effectFilename =
+    effectPath
+      .split("/")
+      .pop();
+
+  const productId =
+    product.id ||
+    effectFilename;
+
+  const productName =
+    product.name ||
+    "Shoe";
+
+  const productPrice =
+    product.price ||
+    "";
+
+  const productImage =
+    product.image ||
+    "";
+
+  wrapper.innerHTML = `
+    <div
+      class="product-card card dynamic-product"
+      id="${escapeHtml(effectFilename)}"
+      data-product-id="${escapeHtml(productId)}"
+      data-effect="${escapeHtml(effectPath)}"
+    >
+
+      <span class="img-span">
+
+        <img
+          class="card-img-top"
+          src="${escapeHtml(productImage)}"
+          alt="${escapeHtml(productName)}"
+          loading="lazy"
+        >
+
+      </span>
+
+      <div
+        style="
+          flex:1;
+          padding:0 .4rem;
+        "
+      >
+
+        <div class="name-span">
+
+          <p class="card-name">
+            ${escapeHtml(productName)}
+          </p>
+
+        </div>
+
+        <a class="price">
+          ${escapeHtml(productPrice)}
+        </a>
+
+      </div>
+
+    </div>
+  `;
+
+  return wrapper;
+}
+
+// ---------------------------------------------------------
+// HTML ESCAPE
+// ---------------------------------------------------------
+
+function escapeHtml(
+  value
+) {
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+}
+
+// ---------------------------------------------------------
+// LOAD PRODUCTS
+// ---------------------------------------------------------
+
+async function loadDynamicProducts() {
+  const productList =
+    document.getElementById(
+      "product-list"
+    );
+
+  if (!productList) {
+    console.log(
+      "Dynamic product container not found. Using existing products."
+    );
+
+    attachProductCardEvents();
+
+    return;
+  }
+
+  try {
+    const response =
+      await fetch(
+        `${PRODUCT_DATA_URL}?t=${Date.now()}`,
+        {
+          cache:
+            "no-store",
+        }
+      );
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to load products.json: ${response.status}`
+      );
+    }
+
+    const products =
+      await response.json();
+
+    if (
+      !Array.isArray(
+        products
+      )
+    ) {
+      throw new Error(
+        "products.json must contain an array."
+      );
+    }
+
+    console.log(
+      "Products loaded from GitHub/Vercel:",
+      products
+    );
+
+    // Remove old dynamic products
+    productList
+      .querySelectorAll(
+        ".dynamic-product"
+      )
+      .forEach(
+        (card) => {
+          card.parentElement?.remove();
+        }
+      );
+
+    // Create products
+    products.forEach(
+      (product) => {
+        const card =
+          createProductCard(
+            product
+          );
+
+        if (card) {
+          productList.appendChild(
+            card
+          );
+        }
+      }
+    );
+
+    // Attach events
+    attachProductCardEvents();
+
+    // Product count
+    const productCount =
+      document.querySelector(
+        ".product-count"
+      );
+
+    if (productCount) {
+      productCount.textContent =
+        `${products.length} products`;
+    }
+
+    console.log(
+      `Successfully loaded ${products.length} dynamic products.`
+    );
+
+  } catch (error) {
+    console.error(
+      "Unable to load dynamic products:",
+      error
+    );
+
+    attachProductCardEvents();
+  }
+}
+
+// ---------------------------------------------------------
+// START BUTTON
+// ---------------------------------------------------------
+
+const startButton =
+  document.getElementById(
+    "getStartBtn"
+  );
+
+if (startButton) {
+  startButton.addEventListener(
+    "click",
+    () => {
+      window.location.href =
+        "getInfo.html";
+    }
+  );
+}
+
+// ---------------------------------------------------------
+// SHOW BUTTON
+// ---------------------------------------------------------
+
+const showButton =
+  document.getElementById(
+    "showBtn"
+  );
 
 if (showButton) {
+  showButton.addEventListener(
+    "click",
+    () => {
+      window.location.href =
+        "tryon.html";
+    }
+  );
+}
 
-  showButton.addEventListener("click", () => {
+// ---------------------------------------------------------
+// START PRODUCT LOADING
+// ---------------------------------------------------------
 
-    window.location.href = "tryon.html";
-
-  });
-
+if (
+  document.readyState ===
+  "loading"
+) {
+  document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+      loadDynamicProducts();
+    }
+  );
+} else {
+  loadDynamicProducts();
 }

@@ -1,99 +1,46 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta charset="UTF-8" />
 
-  <title>Virtual Try-On | Perfect Match</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
 
-  <link
-    rel="shortcut icon"
-    href="https://cdn-icons-png.flaticon.com/512/5499/5499242.png"
-    type="image/x-icon"
-  >
-
-  <link rel="stylesheet" href="main.css">
-  <link rel="stylesheet" href="mycss.css">
-
-  <script src="bootstrap.bundle.min.js"></script>
-  <script src="myscript.js"></script>
-
-  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <title>AR Shoe Try-On</title>
 
   <style>
-/* =========================================================
-   PERFECT MATCH — PREMIUM DESKTOP AR TRY-ON
-   DeepAR / product functionality preserved
-   ========================================================= */
-
-:root {
-  --ar-white: #ffffff;
-  --ar-muted: rgba(255,255,255,.62);
-  --ar-glass: rgba(12,14,18,.72);
-  --ar-border: rgba(255,255,255,.13);
-  --ar-blue: #72b7ff;
-  --ar-green: #65e6a1;
-}
-
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html,
 body {
-  margin: 0;
-  padding: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
-
+  background: #050505;
   font-family:
     Inter,
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-
-  background: #050608;
-  color: #fff;
 }
 
-body {
-  min-height: 100dvh;
-}
-
-.ar-app {
-  position: relative;
-  width: 100vw;
-  height: 100dvh;
-  overflow: hidden;
-  background: #050608;
-}
-
-/* =========================================================
+/* =====================================================
    FULL SCREEN CAMERA
-   ========================================================= */
-
-.ar-camera {
-  position: absolute;
-  inset: 0;
-
-  width: 100vw;
-  height: 100dvh;
-
-  overflow: hidden;
-  background: #08090b;
-}
+===================================================== */
 
 #deepar-canvas {
-  position: absolute;
-
+  position: fixed;
   inset: 0;
 
   width: 100vw !important;
-  height: 100dvh !important;
+  height: 100vh !important;
 
   max-width: none !important;
   max-height: none !important;
@@ -102,537 +49,291 @@ body {
 
   object-fit: cover;
 
-  z-index: 1;
-}
-
-canvas.deepar {
-  position: absolute !important;
-  inset: 0 !important;
-
-  width: 100vw !important;
-  height: 100dvh !important;
-
-  max-width: none !important;
-  max-height: none !important;
-
-  margin: 0 !important;
-  padding: 0;
-
-  background: #050608;
+  background: #050505;
 
   z-index: 1;
 }
 
-/* =========================================================
-   CINEMATIC GRADIENTS
-   ========================================================= */
+/* =====================================================
+   CAMERA OVERLAY
+===================================================== */
 
-.camera-top-gradient {
-  position: absolute;
-  inset: 0 0 auto 0;
+body::after {
+  content: "";
 
-  height: 210px;
+  position: fixed;
+  inset: 0;
 
-  z-index: 4;
+  z-index: 2;
+
   pointer-events: none;
 
   background:
     linear-gradient(
       to bottom,
-      rgba(0,0,0,.72),
-      rgba(0,0,0,.30),
-      transparent
+      rgba(0, 0, 0, 0.48) 0%,
+      rgba(0, 0, 0, 0.05) 25%,
+      rgba(0, 0, 0, 0.02) 55%,
+      rgba(0, 0, 0, 0.72) 100%
     );
 }
 
-.camera-bottom-gradient {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  height: 470px;
-
-  z-index: 4;
-  pointer-events: none;
-
-  background:
-    linear-gradient(
-      to top,
-      rgba(0,0,0,.94),
-      rgba(0,0,0,.72) 28%,
-      rgba(0,0,0,.25) 70%,
-      transparent
-    );
-}
-
-/* =========================================================
+/* =====================================================
    TOP BAR
-   ========================================================= */
+===================================================== */
 
-.ar-topbar {
-  position: absolute;
+#brand-text {
+  position: fixed;
 
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 22px;
+  left: 50%;
 
-  height: 78px;
+  transform: translateX(-50%);
 
-  z-index: 30;
+  z-index: 20;
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: none;
 
-  padding: 0 30px;
-
-  pointer-events: none;
-}
-
-.top-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* =========================================================
-   BACK BUTTON
-   ========================================================= */
-
-.back-button,
-.camera-button {
-  width: 46px;
-  height: 46px;
-
-  display: flex;
   align-items: center;
   justify-content: center;
 
-  border: 1px solid rgba(255,255,255,.15);
+  padding: 11px 20px;
 
-  border-radius: 50%;
+  border-radius: 999px;
 
-  background: rgba(12,14,18,.48);
+  background: rgba(15, 15, 15, 0.58);
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
 
   color: #fff;
 
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  font-size: 13px;
+  font-weight: 700;
 
-  cursor: pointer;
+  letter-spacing: 0.12em;
 
-  pointer-events: auto;
-
-  transition:
-    transform .2s ease,
-    background .2s ease;
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.25);
 }
 
-.back-button:hover,
-.camera-button:hover {
-  transform: translateY(-2px);
-  background: rgba(255,255,255,.13);
-}
+/* =====================================================
+   LOADER
+===================================================== */
 
-/* =========================================================
-   BRAND
-   ========================================================= */
+#loader-wrapper {
+  position: fixed;
+  inset: 0;
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  padding: 10px 16px;
-
-  border-radius: 999px;
-
-  background: rgba(12,14,18,.48);
-
-  border: 1px solid rgba(255,255,255,.13);
-
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-.brand-icon {
-  width: 28px;
-  height: 28px;
+  z-index: 100;
 
   display: flex;
+
+  flex-direction: column;
+
   align-items: center;
   justify-content: center;
 
-  border-radius: 9px;
+  gap: 18px;
 
-  background: #fff;
-  color: #111;
+  background: #050505;
 }
 
-.brand-name {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: -.3px;
-}
-
-/* =========================================================
-   CAMERA STATUS
-   ========================================================= */
-
-.status-pill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  padding: 10px 15px;
-
-  border-radius: 999px;
-
-  background: rgba(12,14,18,.48);
-
-  border: 1px solid rgba(255,255,255,.13);
-
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-
-  font-size: 12px;
-  font-weight: 600;
-
-  color: rgba(255,255,255,.88);
-
-  pointer-events: auto;
-}
-
-.status-dot {
-  width: 8px;
-  height: 8px;
+.loader {
+  width: 42px;
+  height: 42px;
 
   border-radius: 50%;
 
-  background: var(--ar-green);
+  border: 3px solid rgba(255, 255, 255, 0.15);
 
-  box-shadow:
-    0 0 10px rgba(101,230,161,.85);
+  border-top-color: #fff;
+
+  animation: spin 0.8s linear infinite;
 }
 
-/* =========================================================
-   LIVE TRY-ON PILL
-   ========================================================= */
+.loader-text {
+  color: rgba(255, 255, 255, 0.75);
 
-.camera-tip {
-  position: absolute;
+  font-size: 14px;
 
-  top: 96px;
+  letter-spacing: 0.02em;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =====================================================
+   FEET INSTRUCTION
+===================================================== */
+
+#feet-text {
+  position: fixed;
+
+  top: 92px;
   left: 50%;
 
   transform: translateX(-50%);
 
   z-index: 15;
 
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  width: max-content;
+  max-width: calc(100vw - 40px);
 
   padding: 10px 16px;
 
   border-radius: 999px;
 
-  background: rgba(15,17,21,.54);
+  background: rgba(10, 10, 10, 0.48);
 
-  border: 1px solid rgba(255,255,255,.14);
+  border: 1px solid rgba(255, 255, 255, 0.16);
 
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 
-  color: rgba(255,255,255,.82);
+  color: #fff;
 
-  font-size: 11px;
-  font-weight: 600;
-
-  white-space: nowrap;
-}
-
-/* =========================================================
-   SCAN FRAME
-   ========================================================= */
-
-.scan-guide {
-  position: absolute;
-
-  top: 49%;
-  left: 50%;
-
-  transform: translate(-50%, -50%);
-
-  width: min(520px, 42vw);
-  height: min(420px, 48vh);
-
-  z-index: 8;
-
-  pointer-events: none;
-}
-
-.guide-corner {
-  position: absolute;
-
-  width: 46px;
-  height: 46px;
-
-  border-color: rgba(255,255,255,.82);
-  border-style: solid;
-
-  filter:
-    drop-shadow(0 0 8px rgba(255,255,255,.12));
-}
-
-.guide-corner.tl {
-  top: 0;
-  left: 0;
-
-  border-width: 2px 0 0 2px;
-  border-radius: 15px 0 0 0;
-}
-
-.guide-corner.tr {
-  top: 0;
-  right: 0;
-
-  border-width: 2px 2px 0 0;
-  border-radius: 0 15px 0 0;
-}
-
-.guide-corner.bl {
-  bottom: 0;
-  left: 0;
-
-  border-width: 0 0 2px 2px;
-  border-radius: 0 0 0 15px;
-}
-
-.guide-corner.br {
-  bottom: 0;
-  right: 0;
-
-  border-width: 0 2px 2px 0;
-  border-radius: 0 0 15px 0;
-}
-
-.guide-message {
-  position: absolute;
-
-  left: 50%;
-  bottom: -62px;
-
-  transform: translateX(-50%);
-
-  white-space: nowrap;
-
-  padding: 10px 16px;
-
-  border-radius: 999px;
-
-  background: rgba(8,9,11,.58);
-
-  border: 1px solid rgba(255,255,255,.12);
-
-  backdrop-filter: blur(18px);
-
-  font-size: 12px;
-  font-weight: 500;
-
-  color: rgba(255,255,255,.88);
-}
-
-/* =========================================================
-   LOADER
-   ========================================================= */
-
-#loader-wrapper {
-  position: absolute;
-
-  top: 50%;
-  left: 50%;
-
-  transform: translate(-50%, -50%);
-
-  z-index: 40;
-
-  width: 82px;
-  height: 82px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background: rgba(0,0,0,.48);
-
-  border: 1px solid rgba(255,255,255,.12);
-
-  backdrop-filter: blur(20px);
-
-  pointer-events: none;
-}
-
-#loader-wrapper .loader {
-  width: 32px;
-  height: 32px;
-
-  border-radius: 50%;
-
-  border: 3px solid rgba(255,255,255,.18);
-  border-top-color: #fff;
-
-  animation: ar-spin .8s linear infinite;
-}
-
-@keyframes ar-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* =========================================================
-   LEGACY JS ELEMENT
-   Keep ID but don't visually show duplicate branding.
-   ========================================================= */
-
-#brand-text {
-  display: none !important;
-}
-
-/* =========================================================
-   FOOT INSTRUCTION
-   ========================================================= */
-
-#feet-text {
-  position: absolute;
-
-  left: 50%;
-  bottom: 265px;
-
-  transform: translateX(-50%);
-
-  z-index: 16;
-
-  width: max-content;
-  max-width: 90%;
-
-  margin: 0;
-  padding: 10px 16px;
-
-  border-radius: 999px;
-
-  background: rgba(5,6,8,.58);
-
-  border: 1px solid rgba(255,255,255,.12);
-
-  backdrop-filter: blur(18px);
-
-  font-size: 12px;
-  font-weight: 500;
-
-  color: rgba(255,255,255,.9);
+  font-size: 13px;
 
   text-align: center;
 }
 
-/* =========================================================
-   PRODUCT PANEL
-   ========================================================= */
+/* =====================================================
+   SCAN AREA
+===================================================== */
 
-.product-panel {
+.scan-guide {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 8;
+
+  pointer-events: none;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding-bottom: 150px;
+}
+
+.scan-frame {
+  position: relative;
+
+  width: min(360px, 70vw);
+  height: min(420px, 58vh);
+
+  border: 1px solid rgba(255, 255, 255, 0.22);
+
+  border-radius: 36px;
+
+  opacity: 0.65;
+}
+
+.scan-frame::before,
+.scan-frame::after {
+  content: "";
+
   position: absolute;
 
-  left: 50%;
-  bottom: 24px;
+  width: 42px;
+  height: 42px;
 
-  transform: translateX(-50%);
+  border-color: rgba(255, 255, 255, 0.9);
 
-  z-index: 25;
+  border-style: solid;
+}
 
-  width: min(1180px, calc(100vw - 80px));
+.scan-frame::before {
+  top: -1px;
+  left: -1px;
 
-  padding: 20px 22px 16px;
+  border-width: 2px 0 0 2px;
 
-  border-radius: 28px;
+  border-radius: 35px 0 0 0;
+}
+
+.scan-frame::after {
+  right: -1px;
+  bottom: -1px;
+
+  border-width: 0 2px 2px 0;
+
+  border-radius: 0 0 35px 0;
+}
+
+/* =====================================================
+   PRODUCT AREA
+===================================================== */
+
+.product-panel {
+  position: fixed;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  z-index: 30;
+
+  padding:
+    20px
+    24px
+    calc(20px + env(safe-area-inset-bottom));
 
   background:
     linear-gradient(
-      135deg,
-      rgba(25,28,34,.88),
-      rgba(10,12,16,.82)
+      to top,
+      rgba(0, 0, 0, 0.92),
+      rgba(0, 0, 0, 0.72),
+      rgba(0, 0, 0, 0)
     );
 
-  border: 1px solid rgba(255,255,255,.12);
-
-  box-shadow:
-    0 30px 90px rgba(0,0,0,.42),
-    inset 0 1px 0 rgba(255,255,255,.05);
-
-  backdrop-filter: blur(26px);
-  -webkit-backdrop-filter: blur(26px);
+  pointer-events: auto;
 }
 
-/* =========================================================
-   PRODUCT HEADER
-   ========================================================= */
+.product-panel-header {
+  width: min(1100px, 100%);
 
-.product-header {
+  margin: 0 auto 12px;
+
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
 
-  margin-bottom: 14px;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.product-heading small {
-  display: block;
+.product-panel-title {
+  color: #fff;
 
-  margin-bottom: 5px;
+  font-size: 15px;
 
-  color: rgba(255,255,255,.48);
-
-  font-size: 10px;
   font-weight: 700;
 
-  text-transform: uppercase;
-  letter-spacing: 1.3px;
-}
-
-.product-heading h2 {
-  margin: 0;
-
-  font-size: 21px;
-  line-height: 1.1;
-
-  font-weight: 750;
-
-  letter-spacing: -.7px;
+  letter-spacing: -0.01em;
 }
 
 .product-count {
-  color: rgba(255,255,255,.52);
+  color: rgba(255, 255, 255, 0.58);
 
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 12px;
 }
 
-/* =========================================================
+/* =====================================================
    PRODUCT SCROLLER
-   ========================================================= */
+===================================================== */
 
 .product-scroll {
-  display: flex;
-
-  gap: 12px;
+  width: 100%;
 
   overflow-x: auto;
   overflow-y: hidden;
-
-  padding: 2px 2px 8px;
 
   scrollbar-width: none;
 
@@ -643,1063 +344,482 @@ canvas.deepar {
   display: none;
 }
 
-/* Remove bootstrap grid behavior */
-.list-product {
-  margin: 0 !important;
-  width: 100%;
+.product-scroll .container-fluid {
+  width: min(1100px, 100%);
+
+  margin: auto;
+
+  padding: 0;
 }
 
-.list-product > .container-fluid,
-.list-product .row {
-  margin: 0 !important;
-  padding: 0 !important;
-}
+/* =====================================================
+   PRODUCT LIST
+===================================================== */
 
-.list-product .row {
-  display: flex;
-  flex-wrap: nowrap;
+#product-list {
+  display: flex !important;
+
+  flex-wrap: nowrap !important;
 
   gap: 12px;
+
+  width: max-content;
+
+  min-width: 100%;
+
+  margin: 0;
+
+  padding: 0 2px;
 }
 
-.list-product .row > .col {
-  width: auto;
+#product-list > .col {
+  flex: 0 0 148px !important;
+
+  width: 148px !important;
+
+  max-width: 148px !important;
+
   padding: 0 !important;
 }
 
-/* =========================================================
-   PRODUCT CARDS
-   ========================================================= */
+/* =====================================================
+   PRODUCT CARD
+===================================================== */
 
 .product-card {
-  position: relative;
+  width: 148px;
 
-  flex: 0 0 165px;
-
-  width: 165px;
-  min-height: 184px;
-
-  padding: 9px;
-
-  display: flex;
-  flex-direction: column;
-
-  border-radius: 19px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255,255,255,.105),
-      rgba(255,255,255,.045)
-    );
-
-  border: 1px solid rgba(255,255,255,.10);
-
-  color: #fff;
-
-  cursor: pointer;
+  min-height: 178px;
 
   overflow: hidden;
 
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  display: flex;
+
+  flex-direction: column;
+
+  cursor: pointer;
+
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.96);
+
+  border: 2px solid transparent;
+
+  color: #111;
+
+  box-shadow:
+    0 12px 35px rgba(0, 0, 0, 0.3);
 
   transition:
-    transform .22s ease,
-    border-color .22s ease,
-    background .22s ease,
-    box-shadow .22s ease;
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .product-card:hover {
   transform: translateY(-4px);
 
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255,255,255,.15),
-      rgba(255,255,255,.06)
-    );
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.4);
+}
 
-  border-color: rgba(255,255,255,.22);
+.product-card:active {
+  transform: scale(0.96);
 }
 
 .product-card.selected {
-  border-color: var(--ar-blue);
+  border-color: #fff;
 
   box-shadow:
-    0 0 0 1px rgba(114,183,255,.35),
-    0 10px 35px rgba(70,145,220,.18);
+    0 0 0 2px rgba(255, 255, 255, 0.3),
+    0 15px 40px rgba(0, 0, 0, 0.4);
 }
 
-/* =========================================================
+/* =====================================================
    PRODUCT IMAGE
-   ========================================================= */
+===================================================== */
 
-.product-card .img-span {
+.img-span {
+  position: relative;
+
   width: 100%;
-  height: 108px;
+  height: 112px;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
   overflow: hidden;
 
-  border-radius: 14px;
-
-  background:
-    linear-gradient(
-      145deg,
-      #f5f5f3,
-      #dedfdd
-    );
+  background: #f3f3f3;
 }
 
-.product-card .card-img-top {
+.card-img-top {
   width: 100%;
   height: 100%;
 
-  object-fit: contain;
-
   display: block;
 
-  transition: transform .3s ease;
+  object-fit: cover;
+
+  transition: transform 0.25s ease;
 }
 
 .product-card:hover .card-img-top {
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
 
-/* =========================================================
-   PRODUCT TEXT
-   ========================================================= */
+/* =====================================================
+   PRODUCT INFORMATION
+===================================================== */
 
-.product-card > div:not(.line) {
-  background: transparent !important;
+.product-card > div:last-child {
+  flex: 1;
+
+  padding: 9px 10px 10px !important;
 }
 
-.product-card .name-span {
-  margin-top: 9px;
+.name-span {
+  overflow: hidden;
 }
 
-.product-card .card-name {
+.card-name {
   margin: 0;
+
+  color: #111;
+
+  font-size: 12px;
+
+  font-weight: 750;
+
+  line-height: 1.25;
 
   display: -webkit-box;
 
   -webkit-line-clamp: 2;
+
   -webkit-box-orient: vertical;
 
   overflow: hidden;
-
-  font-size: 11px;
-  line-height: 1.35;
-
-  color: rgba(255,255,255,.9);
-
-  font-weight: 650;
 }
 
-.product-card .price {
+.price {
   display: block;
 
-  margin-top: 7px;
+  margin-top: 5px;
 
-  color: #fff;
+  color: #666;
 
-  font-size: 12px;
-  font-weight: 750;
+  font-size: 11px;
+
+  font-weight: 600;
 
   text-decoration: none;
 }
 
-/* Hide old unused controls */
-.product-card .btn-group,
-.product-card .line,
-.product-card .text-group-2,
-.product-card .d-flex.text-group-2 {
-  display: none !important;
+/* =====================================================
+   EMPTY PRODUCTS
+===================================================== */
+
+.products-message {
+  padding: 15px 18px;
+
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  color: rgba(255, 255, 255, 0.7);
+
+  font-size: 13px;
 }
 
-/* =========================================================
-   HIDDEN ORIGINAL PRODUCTS
-   ========================================================= */
-
-.list-product .col[style*="display: none"] {
-  display: none !important;
-}
-
-/* =========================================================
-   DESKTOP
-   ========================================================= */
-
-@media (min-width: 900px) {
-
-  .ar-topbar {
-    padding: 0 32px;
-  }
-
-  .scan-guide {
-    width: min(520px, 42vw);
-    height: min(420px, 48vh);
-  }
-
-  .product-panel {
-    width: min(1180px, calc(100vw - 80px));
-  }
-
-  .product-scroll {
-    overflow-x: auto;
-  }
-
-  #feet-text {
-    bottom: 265px;
-  }
-
-}
-
-/* =========================================================
-   TABLET
-   ========================================================= */
-
-@media (max-width: 899px) {
-
-  .product-panel {
-    width: calc(100vw - 30px);
-
-    bottom: 15px;
-
-    padding: 15px;
-
-    border-radius: 23px;
-  }
-
-  .product-card {
-    flex-basis: 145px;
-    width: 145px;
-  }
-
-  .product-card .img-span {
-    height: 95px;
-  }
-
-}
-
-/* =========================================================
+/* =====================================================
    MOBILE
-   ========================================================= */
+===================================================== */
 
-@media (max-width: 650px) {
+@media (max-width: 600px) {
 
-  .ar-topbar {
-    height: 68px;
-    padding: 0 14px;
-  }
+  #brand-text {
+    top: 14px;
 
-  .back-button,
-  .camera-button {
-    width: 40px;
-    height: 40px;
-  }
+    padding: 9px 16px;
 
-  .brand {
-    padding: 8px 11px;
-  }
+    font-size: 11px;
 
-  .brand-name {
-    font-size: 12px;
-  }
-
-  .status-pill {
-    padding: 8px 10px;
-  }
-
-  .status-pill span:last-child {
-    display: none;
-  }
-
-  .camera-tip {
-    top: 82px;
-    font-size: 10px;
-  }
-
-  .scan-guide {
-    width: 72vw;
-    height: 38vh;
-  }
-
-  .guide-corner {
-    width: 34px;
-    height: 34px;
-  }
-
-  .guide-message {
-    bottom: -48px;
-    font-size: 10px;
+    letter-spacing: 0.1em;
   }
 
   #feet-text {
-    bottom: 250px;
+    top: 66px;
 
-    font-size: 10px;
+    font-size: 11px;
 
-    padding: 8px 12px;
+    padding: 8px 13px;
   }
 
-  .camera-bottom-gradient {
-    height: 390px;
+  .scan-guide {
+    padding-bottom: 125px;
+  }
+
+  .scan-frame {
+    width: 74vw;
+    height: 48vh;
+
+    border-radius: 28px;
   }
 
   .product-panel {
-    left: 10px;
-    right: 10px;
-    bottom: 10px;
-
-    transform: none;
-
-    width: auto;
-
-    padding: 14px 12px 10px;
-
-    border-radius: 21px;
+    padding:
+      12px
+      12px
+      calc(12px + env(safe-area-inset-bottom));
   }
 
-  .product-heading h2 {
-    font-size: 17px;
+  .product-panel-header {
+    margin-bottom: 8px;
+  }
+
+  .product-panel-title {
+    font-size: 13px;
   }
 
   .product-count {
-    font-size: 9px;
-  }
-
-  .product-card {
-    flex-basis: 128px;
-    width: 128px;
-
-    min-height: 160px;
-
-    border-radius: 16px;
-  }
-
-  .product-card .img-span {
-    height: 88px;
-  }
-
-  .product-card .card-name {
     font-size: 10px;
   }
 
-  .product-card .price {
-    font-size: 11px;
+  #product-list {
+    gap: 8px;
   }
 
-}
+  #product-list > .col {
+    flex-basis: 125px !important;
 
-/* =========================================================
-   SMALL MOBILE
-   ========================================================= */
+    width: 125px !important;
 
-@media (max-width: 380px) {
-
-  .brand {
-    display: none;
+    max-width: 125px !important;
   }
 
   .product-card {
-    flex-basis: 116px;
-    width: 116px;
+    width: 125px;
+
+    min-height: 150px;
+
+    border-radius: 15px;
   }
 
-  .product-card .img-span {
-    height: 80px;
+  .img-span {
+    height: 92px;
   }
 
-  .camera-tip {
-    font-size: 9px;
+  .product-card > div:last-child {
+    padding: 7px 8px 8px !important;
   }
 
+  .card-name {
+    font-size: 10.5px;
+  }
+
+  .price {
+    margin-top: 3px;
+
+    font-size: 9.5px;
+  }
 }
 
-/* =========================================================
-   ACCESSIBILITY
-   ========================================================= */
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
 
-@media (prefers-reduced-motion: reduce) {
+@media (max-width: 380px) {
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: .01ms !important;
+  #product-list > .col {
+    flex-basis: 112px !important;
+
+    width: 112px !important;
+
+    max-width: 112px !important;
   }
 
+  .product-card {
+    width: 112px;
+
+    min-height: 138px;
+  }
+
+  .img-span {
+    height: 82px;
+  }
+
+  .card-name {
+    font-size: 10px;
+  }
+}
+
+/* =====================================================
+   LANDSCAPE MOBILE
+===================================================== */
+
+@media (
+  orientation: landscape
+) and (max-height: 600px) {
+
+  .product-panel {
+    padding-top: 8px;
+
+    padding-bottom:
+      calc(8px + env(safe-area-inset-bottom));
+  }
+
+  .product-panel-header {
+    margin-bottom: 6px;
+  }
+
+  .product-card {
+    min-height: 118px;
+  }
+
+  .img-span {
+    height: 72px;
+  }
+
+  #product-list > .col {
+    width: 105px !important;
+
+    max-width: 105px !important;
+
+    flex-basis: 105px !important;
+  }
+
+  .product-card {
+    width: 105px;
+  }
+
+  .scan-guide {
+    padding-bottom: 70px;
+  }
+
+  .scan-frame {
+    width: 230px;
+    height: 260px;
+  }
 }
 </style>
 </head>
 
-
 <body>
 
-  <div class="ar-app">
+  <!-- ==================================================
+       DEEPAR CANVAS
+  =================================================== -->
 
-    <!-- =====================================================
-         AR CAMERA
-         ===================================================== -->
-
-    <div class="ar-camera">
-
-      <!-- DEEPAR CANVAS — DO NOT REMOVE -->
-      <canvas
-        class="deepar"
-        id="deepar-canvas">
-      </canvas>
-
-      <!-- Camera gradients -->
-      <div class="camera-top-gradient"></div>
-      <div class="camera-bottom-gradient"></div>
+  <canvas id="deepar-canvas"></canvas>
 
 
-      <!-- Scan guide -->
-      <div class="scan-guide">
+  <!-- ==================================================
+       LOADER
+  =================================================== -->
 
-        <div class="guide-corner tl"></div>
-        <div class="guide-corner tr"></div>
-        <div class="guide-corner bl"></div>
-        <div class="guide-corner br"></div>
+  <div id="loader-wrapper">
 
-        <div class="guide-message">
-          Position your feet inside the frame
-        </div>
+    <div class="loader"></div>
 
+    <div class="loader-text">
+      Preparing virtual try-on...
+    </div>
+
+  </div>
+
+
+  <!-- ==================================================
+       BRAND
+  =================================================== -->
+
+  <div id="brand-text">
+    AR SHOE TRY-ON
+  </div>
+
+
+  <!-- ==================================================
+       FEET MESSAGE
+  =================================================== -->
+
+  <div id="feet-text">
+    Place both feet inside the camera view.
+  </div>
+
+
+  <!-- ==================================================
+       SCAN GUIDE
+  =================================================== -->
+
+  <div class="scan-guide">
+
+    <div class="scan-frame"></div>
+
+  </div>
+
+
+  <!-- ==================================================
+       PRODUCT PANEL
+  =================================================== -->
+
+  <section class="product-panel">
+
+    <div class="product-panel-header">
+
+      <div class="product-panel-title">
+        Choose Your Shoe
       </div>
 
-
-      <!-- Loader — KEEP ID -->
-      <div id="loader-wrapper">
-        <span class="loader"></span>
-      </div>
-
-
-      <!-- Existing text — KEEP ID -->
-      <div id="brand-text">
-        <h4 style="margin: 0;">PerfectMatch</h4>
-      </div>
-
-
-      <!-- Existing text — KEEP ID -->
-      <h3 id="feet-text">
-        Click a shoe and place your feet inside the frame
-      </h3>
-
-
-      <!-- Camera tip -->
-      <div class="camera-tip">
-        <iconify-icon
-          icon="ph:camera"
-          width="14">
-        </iconify-icon>
-
-        Live virtual try-on
+      <div
+        class="product-count"
+      >
+        Loading products...
       </div>
 
     </div>
 
 
-    <!-- =====================================================
-         TOP BAR
-         ===================================================== -->
+    <div class="product-scroll list-product album">
 
-    <header class="ar-topbar">
+      <div class="container-fluid">
 
-      <div class="top-left">
+        <!--
+          IMPORTANT:
 
-        <button
-          class="back-button"
-          type="button"
-          onclick="window.location.href='detail.html'"
-          aria-label="Back">
+          Products are automatically inserted here
+          from:
 
-          <iconify-icon
-            icon="ph:arrow-left"
-            width="19">
-          </iconify-icon>
+          data/products.json
 
-        </button>
+          Do not manually add Product Manager
+          products to this section.
+        -->
 
+        <div
+          class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"
+          id="product-list"
+        >
 
-        <div class="brand">
-
-          <span class="brand-icon">
-
-            <iconify-icon
-              icon="ph:eye-light"
-              width="17">
-            </iconify-icon>
-
-          </span>
-
-          <span class="brand-name">
-            Perfect Match
-          </span>
+          <!-- Dynamic products -->
 
         </div>
 
       </div>
 
+    </div>
 
-      <div class="status-pill">
+  </section>
 
-        <span class="status-dot"></span>
 
-        <span>
-          Camera ready
-        </span>
+  <!-- ==================================================
+       MAIN BUNDLE
+  =================================================== -->
 
-      </div>
-
-    </header>
-
-
-    <!-- =====================================================
-         PRODUCT PANEL
-         ===================================================== -->
-
-    <section class="product-panel">
-
-      <div class="product-header">
-
-        <div class="product-heading">
-
-          <small>
-            Virtual try-on
-          </small>
-
-          <h2>
-            Choose your shoes
-          </h2>
-
-        </div>
-
-        <span class="product-count">
-          Swipe to explore
-        </span>
-
-      </div>
-
-
-      <!-- =================================================
-           ORIGINAL PRODUCT LIST
-           IDs + product-card CLASS PRESERVED
-           ================================================= -->
-
-      <div class="product-scroll list-product album">
-
-        <div class="container-fluid">
-
-          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-
-
-            <!-- =========================================
-                 HIDDEN ORIGINAL PRODUCT
-                 ========================================= -->
-
-            <div class="col" style="display: none;">
-
-              <div
-                class="product-card card"
-                id="puma-suede-classic.deepar">
-
-                <span class="img-span">
-
-                  <img
-                    class="card-img-top"
-                    src="https://res.cloudinary.com/do3n0jjlv/image/upload/v1702649022/Shoes/403612345_908453864339411_9020397972855382698_n_eeydn1.jpg"
-                    alt="Puma Suede Classic">
-
-                </span>
-
-                <div style="flex:1;padding:0 .4rem;">
-
-                  <div class="name-span">
-
-                    <p class="card-name">
-                      Puma Suede Classic Tibetan Red-Hot Coral
-                    </p>
-
-                  </div>
-
-                  <a class="price">
-                    $ 60.30
-                  </a>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <!-- =========================================
-                 HIDDEN ORIGINAL PRODUCT
-                 ========================================= -->
-
-            <div class="col" style="display: none;">
-
-              <div
-                class="product-card card"
-                id="puma-voltaire.deepar">
-
-                <span class="img-span">
-
-                  <img
-                    class="card-img-top"
-                    src="https://a3.cdn.hhv.de/items/images/generated/475x475/00960/960187/1-puma-voltaire-og-pristine-dusty-tan.webp"
-                    alt="Puma Voltaire">
-
-                </span>
-
-                <div style="flex:1;padding:0 .4rem;">
-
-                  <div class="name-span">
-
-                    <p class="card-name">
-                      Puma Voltaire OG (Pristine / Dusty Tan)
-                    </p>
-
-                  </div>
-
-                  <a class="price">
-                    $ 57.30
-                  </a>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <!-- =========================================
-                 HIDDEN ORIGINAL PRODUCT
-                 ========================================= -->
-
-            <div class="col" style="display: none;">
-
-              <div
-                class="product-card card"
-                id="on-run-cloudrock.deepar">
-
-                <span class="img-span">
-
-                  <img
-                    class="card-img-top"
-                    src="https://res.cloudinary.com/do3n0jjlv/image/upload/v1702649015/Shoes/386833737_1092258232205883_1676528638559606304_n_xo4iu5.jpg"
-                    alt="On Running Cloudrock">
-
-                </span>
-
-                <div style="flex:1;padding:0 .4rem;">
-
-                  <div class="name-span">
-
-                    <p class="card-name">
-                      On Running Cloudrock Waterproof Cocoa Red
-                    </p>
-
-                  </div>
-
-                  <a class="price">
-                    £ 144.00
-                  </a>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <!-- =========================================
-                 HIDDEN ORIGINAL PRODUCT
-                 ========================================= -->
-
-            <div class="col" style="display: none;">
-
-              <div
-                class="product-card card"
-                id="on-run-cloudmonster.deepar">
-
-                <span class="img-span">
-
-                  <img
-                    class="card-img-top"
-                    src="https://media.finishline.com/i/finishline/6198283_680_P1?$default$&w=671&&h=671&bg=rgb(237,237,237)"
-                    alt="On CloudMonster">
-
-                </span>
-
-                <div style="flex:1;padding:0 .4rem;">
-
-                  <div class="name-span">
-
-                    <p class="card-name">
-                      Women's On CloudMonster Running Shoes
-                    </p>
-
-                  </div>
-
-                  <a class="price">
-                    $ 170.00
-                  </a>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <!-- =========================================
-                 KHUSSA — NEW PRODUCT
-                 ========================================= -->
-
-            <div class="col">
-
-              <div
-                class="product-card card"
-                id="khussa.deepar">
-
-                <span class="img-span">
-
-                  <img
-                    class="card-img-top"
-                    src="assets/khussa.jpg"
-                    alt="Traditional Khussa">
-
-                </span>
-
-                <div style="flex:1;padding:0 .4rem;">
-
-                  <div class="name-span">
-
-                    <p class="card-name">
-                      Traditional Embroidered Khussa
-                    </p>
-
-                  </div>
-
-                  <a class="price">
-                    Custom
-                  </a>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <!-- =========================================
-                 NIKE DUNK — VISIBLE
-                 ========================================= -->
-
-            <div class="col">
-
-              <div
-                class="product-card card"
-                id="nike-dunk.deepar">
-
-                <span class="img-span">
-
-                  <img
-                    class="card-img-top"
-                    src="https://res.cloudinary.com/do3n0jjlv/image/upload/v1702649317/Shoes/403398657_384538924011762_4284071920092880444_n_ciszhk.jpg"
-                    alt="Nike Dunk Low Laser Orange">
-
-                </span>
-
-                <div style="flex:1;padding:0 .4rem;">
-
-                  <div class="name-span">
-
-                    <p class="card-name">
-                      Nike Dunk Low Laser Orange
-                    </p>
-
-                  </div>
-
-                  <a class="price">
-                    $ 147.30
-                  </a>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <!-- =========================================
-                 NIKE AIR FORCE — VISIBLE
-                 ========================================= -->
-
-            <div class="col">
-
-              <div
-                class="product-card card"
-                id="nike-airforce1.deepar">
-
-                <span class="img-span">
-
-                  <img
-                    class="card-img-top"
-                    src="https://lzd-img-global.slatic.net/g/p/b9655aae270f527efed0ec9ae9345e8d.jpg_720x720q80.jpg_.webp"
-                    alt="Nike Air Force 1">
-
-                </span>
-
-                <div style="flex:1;padding:0 .4rem;">
-
-                  <div class="name-span">
-
-                    <p class="card-name">
-                      Nike AirForce 1 Orange Streak
-                    </p>
-
-                  </div>
-
-                  <a class="price">
-                    $ 120.00
-                  </a>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <!-- =========================================
-                 HIDDEN ORIGINAL PRODUCT
-                 ========================================= -->
-
-            <div class="col" style="display: none;">
-
-              <div
-                class="product-card card"
-                id="nike-airforce-1-lv8.deepar">
-
-                <span class="img-span">
-
-                  <img
-                    class="card-img-top"
-                    src="https://res.cloudinary.com/do3n0jjlv/image/upload/v1702649009/Shoes/403406183_1728852937599073_6823355799884524089_n_ermnw2.jpg"
-                    alt="Nike Air Force">
-
-                </span>
-
-                <div style="flex:1;padding:0 .4rem;">
-
-                  <div class="name-span">
-
-                    <p class="card-name">
-                      Nike AirForce 1 White Black Dark Sulfur
-                    </p>
-
-                  </div>
-
-                  <a class="price">
-                    $ 124.33
-                  </a>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <!-- =========================================
-                 HIDDEN ORIGINAL PRODUCT
-                 ========================================= -->
-
-            <div class="col" style="display: none;">
-
-              <div
-                class="product-card card"
-                id="new-balance-574.deepar">
-
-                <span class="img-span">
-
-                  <img
-                    class="card-img-top"
-                    src="https://sneakerholicvietnam.vn/wp-content/uploads/2022/07/new-balance-574-navy-ml574en-768x768.jpg"
-                    alt="New Balance 574">
-
-                </span>
-
-                <div style="flex:1;padding:0 .4rem;">
-
-                  <div class="name-span">
-
-                    <p class="card-name">
-                      New Balance 574 – Navy
-                    </p>
-
-                  </div>
-
-                  <a class="price">
-                    $ 110.99
-                  </a>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <!-- =========================================
-                 HIDDEN ORIGINAL PRODUCT
-                 ========================================= -->
-
-            <div class="col" style="display: none;">
-
-              <div
-                class="product-card card"
-                id="nike-air-max.deepar">
-
-                <span class="img-span">
-
-                  <img
-                    class="card-img-top"
-                    src="https://res.cloudinary.com/do3n0jjlv/image/upload/v1702648997/Shoes/403411700_1364677317495142_5520796353525316835_n_m5vxwv.jpg"
-                    alt="Nike Air Zoom Citizen">
-
-                </span>
-
-                <div style="flex:1;padding:0 .4rem;">
-
-                  <div class="name-span">
-
-                    <p class="card-name">
-                      Nike Air Zoom Citizen
-                    </p>
-
-                  </div>
-
-                  <a class="price">
-                    $ 89.99
-                  </a>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <!-- =========================================
-                 HIDDEN ORIGINAL PRODUCT
-                 ========================================= -->
-
-            <div class="col" style="display: none;">
-
-              <div
-                class="product-card card"
-                id="Shoe">
-
-                <span class="img-span">
-
-                  <img
-                    class="card-img-top"
-                    src="https://res.cloudinary.com/do3n0jjlv/image/upload/v1702648974/Shoes/403406760_734690218531711_5040748885208091266_n_ux9g6s.jpg"
-                    alt="Nike Roshe Run">
-
-                </span>
-
-                <div style="flex:1;padding:0 .4rem;">
-
-                  <div class="name-span">
-
-                    <p class="card-name">
-                      Nike Women's Roshe Run Floral Pack
-                    </p>
-
-                  </div>
-
-                  <a class="price">
-                    $ 39.00
-                  </a>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <!-- =========================================
-                 NIKE AIR MAX 270 — VISIBLE
-                 ========================================= -->
-
-            <div class="col">
-
-              <div
-                class="product-card card"
-                id="Shoe_PBR">
-
-                <span class="img-span">
-
-                  <img
-                    class="card-img-top"
-                    src="https://imagedelivery.net/2DfovxNet9Syc-4xYpcsGg/1edf71c9-0f83-4120-31de-38faf7e8b900/product"
-                    alt="Nike Air Max 270">
-
-                </span>
-
-                <div style="flex:1;padding:0 .4rem;">
-
-                  <div class="name-span">
-
-                    <p class="card-name">
-                      Nike Air Max 270 Men's Light Bone
-                    </p>
-
-                  </div>
-
-                  <a class="price">
-                    $ 160.00
-                  </a>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-  </div>
-
-
-  <!-- =====================================================
-       DEEPAR / EXISTING APP SCRIPT
-       ===================================================== -->
-
-  <script
-    type="text/javascript"
-    src="main.js">
-  </script>
+  <script src="main.js"></script>
 
 </body>
-
 </html>
