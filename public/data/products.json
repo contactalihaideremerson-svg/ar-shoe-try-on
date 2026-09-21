@@ -16,5 +16,13 @@
     "image": "assets/1789974977312-khusa-01.jpeg",
     "effect": "effects/khusa-2.deepar",
     "enabled": false
+  },
+  {
+    "id": "final-khusa-1790013478293",
+    "name": "final khusa",
+    "price": "2000",
+    "description": "final khusa",
+    "image": "assets/1790013468847-khusa-01.jpeg",
+    "effect": "effects/final-khusa.deepar"
   }
 ]
