@@ -1,7 +1,7 @@
-import { handleUpload } from "@vercel/blob/client";
-
 export default async function handler(req, res) {
+  // --------------------------------------------------
   // Only POST requests are allowed
+  // --------------------------------------------------
   if (req.method !== "POST") {
     return res.status(405).json({
       success: false,
@@ -10,13 +10,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Vercel may provide req.body as an object or string
+    // --------------------------------------------------
+    // Load Vercel Blob only after we know this is POST
+    // --------------------------------------------------
+    const { handleUpload } = await import("@vercel/blob/client");
+
+    // --------------------------------------------------
+    // Parse request body
+    // --------------------------------------------------
     const body =
       typeof req.body === "string"
         ? JSON.parse(req.body)
         : req.body;
 
-    // Validate Blob client request
     if (!body || !body.type) {
       return res.status(400).json({
         success: false,
@@ -24,36 +30,44 @@ export default async function handler(req, res) {
       });
     }
 
+    // --------------------------------------------------
+    // Handle Vercel Blob client upload
+    // --------------------------------------------------
     const response = await handleUpload({
       body,
       request: req,
 
-      // Generate the upload token
+      // ------------------------------------------------
+      // Generate client upload token
+      // ------------------------------------------------
       onBeforeGenerateToken: async (
         pathname,
         clientPayload,
         multipart
       ) => {
-        const filename = pathname.split("/").pop() || "";
+        const filename =
+          pathname.split("/").pop() || "";
 
-        // Only allow DeepAR files
-        if (!filename.toLowerCase().endsWith(".deepar")) {
+        // Only allow .deepar files
+        if (
+          !filename
+            .toLowerCase()
+            .endsWith(".deepar")
+        ) {
           throw new Error(
             "Only .deepar files are allowed."
           );
         }
 
         return {
-          // Only allow binary DeepAR files
           allowedContentTypes: [
             "application/octet-stream",
           ],
 
-          // Maximum DeepAR file size: 90 MB
+          // 90 MB maximum
           maximumSizeInBytes:
             90 * 1024 * 1024,
 
-          // Store some information with the token
           tokenPayload: JSON.stringify({
             filename,
             clientPayload,
@@ -62,7 +76,9 @@ export default async function handler(req, res) {
         };
       },
 
-      // Called after the upload is completed
+      // ------------------------------------------------
+      // Upload completed
+      // ------------------------------------------------
       onUploadCompleted: async ({ blob }) => {
         console.log(
           "DeepAR Blob upload completed:",
@@ -74,7 +90,7 @@ export default async function handler(req, res) {
     return res.status(200).json(response);
   } catch (error) {
     console.error(
-      "Blob upload error:",
+      "DeepAR Blob upload error:",
       error
     );
 
@@ -82,7 +98,7 @@ export default async function handler(req, res) {
       success: false,
       message:
         error?.message ||
-        "Blob upload failed.",
+        "DeepAR Blob upload failed.",
     });
   }
 }
