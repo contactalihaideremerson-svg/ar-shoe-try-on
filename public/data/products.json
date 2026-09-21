@@ -7,5 +7,13 @@
     "image": "assets/1789970794761-WhatsApp-Image-2026-09-21-at-10.15.23-AM.jpeg",
     "effect": "effects/khusa-try-on-final.deepar",
     "enabled": false
+  },
+  {
+    "id": "khusa-02-1789974983615",
+    "name": "khusa 02",
+    "price": "200",
+    "description": "khusa 02",
+    "image": "assets/1789974977312-khusa-01.jpeg",
+    "effect": "effects/khusa-2.deepar"
   }
 ]
