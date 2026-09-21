@@ -98,9 +98,9 @@ export default async function handler(req, res) {
 
     // Decode GitHub Base64 content
     const decoded = Buffer.from(
-      existingFile.content,
-      "base64"
-    ).toString("utf8");
+  existingFile.content.replace(/\s/g, ""),
+  "base64"
+).toString("utf8");
 
     let products;
 
