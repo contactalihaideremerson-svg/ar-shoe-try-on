@@ -24,5 +24,13 @@
     "description": "final khusa",
     "image": "assets/1790013468847-khusa-01.jpeg",
     "effect": "effects/final-khusa.deepar"
+  },
+  {
+    "id": "test-5-1790022130823",
+    "name": "test 5",
+    "price": "2000",
+    "description": "45678909",
+    "image": "assets/1790022122063-khusa-01.jpeg",
+    "effect": "effects/embroidered-slipper-3d-model-_1_.deepar"
   }
 ]
