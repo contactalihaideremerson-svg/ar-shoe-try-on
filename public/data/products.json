@@ -50,5 +50,13 @@
     "description": "Puma Voltaire",
     "image": "assets/1790056754444-imgi_178_389364-01_1--1-.jpg",
     "effect": "effects/puma-voltaire.deepar"
+  },
+  {
+    "id": "nike-dunk-1790056929235",
+    "name": "Nike Dunk",
+    "price": "4999",
+    "description": "Nike Dunk",
+    "image": "assets/1790056924885-imgi_107_NIKE-DUNK-LOW--GS-.png",
+    "effect": "effects/nike-dunk.deepar"
   }
 ]
