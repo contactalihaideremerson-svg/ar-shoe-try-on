@@ -58,5 +58,13 @@
     "description": "Nike Dunk",
     "image": "assets/1790056924885-imgi_107_NIKE-DUNK-LOW--GS-.png",
     "effect": "effects/nike-dunk.deepar"
+  },
+  {
+    "id": "nike-air-force-1-1790057043454",
+    "name": "Nike Air Force 1",
+    "price": "3999",
+    "description": "Nike Air Force 1",
+    "image": "assets/1790057039770-imgi_147_550a562a-a0a0-4b25-a2d4-8995b5871513.jpg",
+    "effect": "effects/nike-airforce-1-lv8.deepar"
   }
 ]
