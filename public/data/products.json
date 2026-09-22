@@ -66,5 +66,13 @@
     "description": "Nike Air Force 1",
     "image": "assets/1790057039770-imgi_147_550a562a-a0a0-4b25-a2d4-8995b5871513.jpg",
     "effect": "effects/nike-airforce-1-lv8.deepar"
+  },
+  {
+    "id": "traditional-embroidered-khussa-1790068602695",
+    "name": "Traditional Embroidered Khussa",
+    "price": "3999",
+    "description": "Traditional Embroidered Khussa",
+    "image": "assets/1790068595042-khusa-01.jpeg",
+    "effect": "effects/deepar-khusa-with-thumb-issue.deepar"
   }
 ]
