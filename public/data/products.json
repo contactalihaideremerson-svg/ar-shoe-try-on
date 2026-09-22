@@ -42,5 +42,13 @@
     "description": "Shoe1",
     "image": "assets/1790056525370-images--1-.jpg",
     "effect": "effects/nike-air-max.deepar"
+  },
+  {
+    "id": "puma-voltaire-1790056758471",
+    "name": "Puma Voltaire",
+    "price": "3000",
+    "description": "Puma Voltaire",
+    "image": "assets/1790056754444-imgi_178_389364-01_1--1-.jpg",
+    "effect": "effects/puma-voltaire.deepar"
   }
 ]
