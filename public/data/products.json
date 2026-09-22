@@ -23,7 +23,8 @@
     "price": "2000",
     "description": "final khusa",
     "image": "assets/1790013468847-khusa-01.jpeg",
-    "effect": "effects/final-khusa.deepar"
+    "effect": "effects/final-khusa.deepar",
+    "enabled": false
   },
   {
     "id": "test-5-1790022130823",
