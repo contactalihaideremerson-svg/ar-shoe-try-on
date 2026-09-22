@@ -513,30 +513,20 @@ function escapeHtml(
 // ---------------------------------------------------------
 
 async function loadDynamicProducts() {
-  const productList =
-    document.getElementById(
-      "product-list"
-    );
+  const productList = document.getElementById("product-list");
 
   if (!productList) {
-    console.log(
-      "Dynamic product container not found. Using existing products."
-    );
-
-    attachProductCardEvents();
-
+    console.error("Product list not found.");
     return;
   }
 
   try {
-    const response =
-      await fetch(
-        `${PRODUCT_DATA_URL}?t=${Date.now()}`,
-        {
-          cache:
-            "no-store",
-        }
-      );
+    const response = await fetch(
+      `${PRODUCT_DATA_URL}?t=${Date.now()}`,
+      {
+        cache: "no-store"
+      }
+    );
 
     if (!response.ok) {
       throw new Error(
@@ -544,67 +534,80 @@ async function loadDynamicProducts() {
       );
     }
 
-    const products =
-      await response.json();
+    const products = await response.json();
 
-    if (
-      !Array.isArray(
-        products
-      )
-    ) {
+    if (!Array.isArray(products)) {
       throw new Error(
         "products.json must contain an array."
       );
     }
 
+    console.log("Products loaded:", products);
+
+    // Remove ALL old products
+    productList.innerHTML = "";
+
+    // Only show enabled products
+    // If enabled is missing, product is treated as ON
+    const visibleProducts = products.filter(
+      (product) =>
+        product &&
+        product.enabled !== false &&
+        product.effect
+    );
+
     console.log(
-      "Products loaded from GitHub/Vercel:",
-      products
+      "Visible products:",
+      visibleProducts
     );
 
-    // Remove old dynamic products
-    productList
-      .querySelectorAll(
-        ".dynamic-product"
-      )
-      .forEach(
-        (card) => {
-          card.parentElement?.remove();
-        }
-      );
+    // No products
+    if (visibleProducts.length === 0) {
+      productList.innerHTML = `
+        <div class="col">
+          <div class="products-message">
+            No shoes are currently available.
+          </div>
+        </div>
+      `;
 
-    // Create products
-    products.forEach(
-      (product) => {
-        const card =
-          createProductCard(
-            product
-          );
+      const productCount =
+        document.querySelector(".product-count");
 
-        if (card) {
-          productList.appendChild(
-            card
-          );
-        }
+      if (productCount) {
+        productCount.textContent = "0 products";
       }
-    );
 
-    // Attach events
+      return;
+    }
+
+    // Create product cards
+    visibleProducts.forEach((product) => {
+      const card = createProductCard(product);
+
+      if (card) {
+        productList.appendChild(card);
+      }
+    });
+
+    // Attach click events
     attachProductCardEvents();
 
-    // Product count
+    // Update count
     const productCount =
-      document.querySelector(
-        ".product-count"
-      );
+      document.querySelector(".product-count");
 
     if (productCount) {
       productCount.textContent =
-        `${products.length} products`;
+        `${visibleProducts.length} ${
+          visibleProducts.length === 1
+            ? "product"
+            : "products"
+        }`;
     }
 
     console.log(
-      `Successfully loaded ${products.length} dynamic products.`
+      `Successfully rendered ${visibleProducts.length} products.`
     );
 
   } catch (error) {
@@ -613,7 +616,21 @@ async function loadDynamicProducts() {
       error
     );
 
-    attachProductCardEvents();
+    productList.innerHTML = `
+      <div class="col">
+        <div class="products-message">
+          Unable to load products.
+        </div>
+      </div>
+    `;
+
+    const productCount =
+      document.querySelector(".product-count");
+
+    if (productCount) {
+      productCount.textContent =
+        "Unable to load products";
+    }
   }
 }
 

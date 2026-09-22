@@ -610,6 +610,7 @@
               const response = await fetch(
                 "/api/update-product",
                 {
+                  
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json"
@@ -619,7 +620,10 @@
                     enabled: newState
                   })
                 }
+                
               );
+
+              
 
               const result = await response.json();
 
