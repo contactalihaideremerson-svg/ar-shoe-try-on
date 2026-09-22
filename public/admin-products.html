@@ -514,10 +514,11 @@
 
     async function loadProducts() {
       try {
+       
         const response = await fetch(
-          `/data/products.json?t=${Date.now()}`,
-          { cache: "no-store" }
-        );
+  `/api/products?t=${Date.now()}`,
+  { cache: "no-store" }
+);
 
         if (!response.ok) {
           throw new Error(

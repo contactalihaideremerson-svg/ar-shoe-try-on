@@ -26,7 +26,7 @@ const selectedEffect =
 // ---------------------------------------------------------
 
 const PRODUCT_DATA_URL =
-  "data/products.json";
+  "/api/products";
 
 // ---------------------------------------------------------
 // EFFECT PATH NORMALIZER
