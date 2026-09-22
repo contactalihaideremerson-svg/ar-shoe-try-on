@@ -34,5 +34,13 @@
     "image": "assets/1790022122063-khusa-01.jpeg",
     "effect": "effects/embroidered-slipper-3d-model-_1_.deepar",
     "enabled": false
+  },
+  {
+    "id": "nike-air-max-1790056527660",
+    "name": "Nike Air Max",
+    "price": "2000",
+    "description": "Shoe1",
+    "image": "assets/1790056525370-images--1-.jpg",
+    "effect": "effects/nike-air-max.deepar"
   }
 ]
