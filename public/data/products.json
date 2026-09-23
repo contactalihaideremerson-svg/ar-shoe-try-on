@@ -25,15 +25,6 @@
     "effect": "effects/nike-dunk.deepar"
   },
   {
-    "id": "nike-air-force-1-1790057043454",
-    "name": "Sapphire Floral Khussa",
-    "price": "3999",
-    "description": "Sapphire Floral Khussa",
-    "image": "assets/khusa-sapphire.png",
-    "effect": "effects/nike-airforce-1-lv8.deepar",
-    "enabled": false
-  },
-  {
     "id": "traditional-embroidered-khussa-1790068602695",
     "name": "Traditional Embroidered Khussa",
     "price": "3999",
