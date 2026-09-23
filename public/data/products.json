@@ -42,7 +42,7 @@
     "description": "Emerald Embroidered Khussa",
     "image": "assets/khusa-02-green.png",
     "effect": "effects/nike-air-max.deepar",
-    "enabled": false
+    "enabled": true
   },
   {
     "id": "puma-voltaire-1790056758471",
