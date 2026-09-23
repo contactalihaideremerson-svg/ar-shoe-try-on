@@ -41,7 +41,8 @@
     "price": "2000",
     "description": "Emerald Embroidered Khussa",
     "image": "assets/khusa-02-green.png",
-    "effect": "effects/nike-air-max.deepar"
+    "effect": "effects/nike-air-max.deepar",
+    "enabled": false
   },
   {
     "id": "puma-voltaire-1790056758471",
