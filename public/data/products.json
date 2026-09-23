@@ -65,7 +65,8 @@
     "price": "3999",
     "description": "Sapphire Floral Khussa",
     "image": "assets/khusa-sapphire.png",
-    "effect": "effects/nike-airforce-1-lv8.deepar"
+    "effect": "effects/nike-airforce-1-lv8.deepar",
+    "enabled": false
   },
   {
     "id": "traditional-embroidered-khussa-1790068602695",
