@@ -1,14 +1,5 @@
 [
   {
-    "id": "khusa-02-1789974983615",
-    "name": "khusa 02",
-    "price": "200",
-    "description": "khusa 02",
-    "image": "assets/1789974977312-khusa-01.jpeg",
-    "effect": "effects/khusa-2.deepar",
-    "enabled": false
-  },
-  {
     "id": "test-5-1790022130823",
     "name": "test 5",
     "price": "2000",
