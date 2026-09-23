@@ -294,6 +294,81 @@
       border-radius: 16px;
     }
 
+    /* ---------------- ROW ACTION BUTTONS ---------------- */
+
+    .row-btn {
+      min-height: 36px;
+      padding: 0 14px;
+      border-radius: 10px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
+    .row-btn:hover {
+      background: #f1ece3;
+    }
+
+    .row-btn.danger {
+      border-color: rgba(178, 58, 58, 0.35);
+      color: var(--red);
+    }
+
+    .row-btn.danger:hover {
+      background: rgba(178, 58, 58, 0.08);
+    }
+
+    /* ---------------- EDIT MODAL ---------------- */
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(36, 26, 20, 0.5);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(480px, 100%);
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-title {
+      font-size: 17px;
+      font-weight: 750;
+      margin-bottom: 18px;
+    }
+
+    .modal-fields {
+      display: grid;
+      gap: 14px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .modal-actions .secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
     @media (max-width: 700px) {
       .admin { width: min(100% - 18px, 1050px); padding-top: 25px; }
       .card { padding: 17px; border-radius: 18px; }
@@ -304,6 +379,8 @@
       .product-meta { font-size: 11px; }
       .status-label { display: none; }
       .actions button { width: 100%; }
+      .product-actions { flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+      .row-btn { min-height: 32px; padding: 0 10px; font-size: 11.5px; }
     }
   </style>
 </head>
@@ -416,6 +493,39 @@
 
   </main>
 
+  <!-- EDIT PRODUCT MODAL -->
+  <div class="modal-overlay" id="edit-modal">
+    <div class="modal-card">
+      <div class="modal-title">Edit Product</div>
+
+      <form id="edit-form">
+        <div class="modal-fields">
+          <div class="field">
+            <label for="edit-name">Product Name</label>
+            <input id="edit-name" type="text" required />
+          </div>
+
+          <div class="field">
+            <label for="edit-price">Price</label>
+            <input id="edit-price" type="text" required />
+          </div>
+
+          <div class="field">
+            <label for="edit-description">Description</label>
+            <textarea id="edit-description" required></textarea>
+          </div>
+        </div>
+
+        <div id="edit-status" class="status"></div>
+
+        <div class="modal-actions">
+          <button type="button" class="secondary" id="edit-cancel">Cancel</button>
+          <button type="submit" id="edit-save">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script type="module">
     import {
       upload
@@ -433,6 +543,18 @@
     const effectInput = document.getElementById("product-effect");
     const imageInfo = document.getElementById("image-info");
     const effectInfo = document.getElementById("effect-info");
+
+    const editModal = document.getElementById("edit-modal");
+    const editForm = document.getElementById("edit-form");
+    const editNameInput = document.getElementById("edit-name");
+    const editPriceInput = document.getElementById("edit-price");
+    const editDescriptionInput = document.getElementById("edit-description");
+    const editStatus = document.getElementById("edit-status");
+    const editCancelButton = document.getElementById("edit-cancel");
+    const editSaveButton = document.getElementById("edit-save");
+
+    let editingProduct = null;
+    let editingRowRefs = null;
 
     function showStatus(element, message, type) {
       element.textContent = message;
@@ -676,8 +798,87 @@
           switchLabel.appendChild(checkbox);
           switchLabel.appendChild(slider);
 
+          const editButton = document.createElement("button");
+          editButton.type = "button";
+          editButton.className = "row-btn";
+          editButton.textContent = "Edit";
+          editButton.addEventListener("click", () => {
+            openEditModal(product, { name, meta, image });
+          });
+
+          const deleteButton = document.createElement("button");
+          deleteButton.type = "button";
+          deleteButton.className = "row-btn danger";
+          deleteButton.textContent = "Delete";
+          deleteButton.addEventListener("click", async () => {
+            const confirmed = window.confirm(
+              `Delete "${product.name}"? This cannot be undone.`
+            );
+
+            if (!confirmed) return;
+
+            deleteButton.disabled = true;
+            editButton.disabled = true;
+            checkbox.disabled = true;
+
+            showStatus(
+              listStatus,
+              `Deleting ${product.name}...`,
+              "loading"
+            );
+
+            try {
+              const response = await fetch("/api/delete-product", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: product.id }),
+              });
+
+              const result = await response.json();
+
+              if (!response.ok || !result.success) {
+                throw new Error(
+                  result.message || "Could not delete product."
+                );
+              }
+
+              row.remove();
+
+              const remaining = productsBox.querySelectorAll(
+                ".product-row"
+              ).length;
+
+              productCount.textContent = `${remaining} product${
+                remaining === 1 ? "" : "s"
+              }`;
+
+              if (remaining === 0) {
+                productsBox.innerHTML =
+                  `<div class="empty">No products found.</div>`;
+              }
+
+              showStatus(
+                listStatus,
+                `${product.name} was deleted.`,
+                "success"
+              );
+            } catch (error) {
+              showStatus(
+                listStatus,
+                error.message || "Failed to delete product.",
+                "error"
+              );
+
+              deleteButton.disabled = false;
+              editButton.disabled = false;
+              checkbox.disabled = false;
+            }
+          });
+
           actions.appendChild(label);
           actions.appendChild(switchLabel);
+          actions.appendChild(editButton);
+          actions.appendChild(deleteButton);
 
           row.appendChild(image);
           row.appendChild(info);
@@ -693,6 +894,109 @@
         productCount.textContent = "Unable to load";
       }
     }
+
+    function openEditModal(product, rowRefs) {
+      editingProduct = product;
+      editingRowRefs = rowRefs;
+
+      editNameInput.value = product.name || "";
+      editPriceInput.value = product.price || "";
+      editDescriptionInput.value = product.description || "";
+
+      editStatus.className = "status";
+      editStatus.textContent = "";
+
+      editModal.classList.add("show");
+      editNameInput.focus();
+    }
+
+    function closeEditModal() {
+      editModal.classList.remove("show");
+      editingProduct = null;
+      editingRowRefs = null;
+      editForm.reset();
+    }
+
+    editCancelButton.addEventListener("click", closeEditModal);
+
+    editModal.addEventListener("click", (event) => {
+      if (event.target === editModal) {
+        closeEditModal();
+      }
+    });
+
+    editForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (!editingProduct) return;
+
+      const name = editNameInput.value.trim();
+      const price = editPriceInput.value.trim();
+      const description = editDescriptionInput.value.trim();
+
+      if (!name || !price || !description) {
+        showStatus(
+          editStatus,
+          "Please fill in all fields.",
+          "error"
+        );
+        return;
+      }
+
+      editSaveButton.disabled = true;
+      editSaveButton.textContent = "Saving...";
+
+      showStatus(editStatus, "Saving changes...", "loading");
+
+      try {
+        const response = await fetch("/api/update-product", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: editingProduct.id,
+            name,
+            price,
+            description,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(
+            result.message || "Could not update product."
+          );
+        }
+
+        editingProduct.name = name;
+        editingProduct.price = price;
+        editingProduct.description = description;
+
+        if (editingRowRefs) {
+          editingRowRefs.name.textContent = name;
+          editingRowRefs.meta.textContent =
+            `${price} • ${editingProduct.enabled === false ? "Hidden" : "Visible"}`;
+          editingRowRefs.image.alt = name;
+        }
+
+        showStatus(
+          listStatus,
+          `${name} was updated.`,
+          "success"
+        );
+
+        closeEditModal();
+      } catch (error) {
+        showStatus(
+          editStatus,
+          error.message || "Failed to update product.",
+          "error"
+        );
+      } finally {
+        editSaveButton.disabled = false;
+        editSaveButton.textContent = "Save Changes";
+      }
+    });
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();

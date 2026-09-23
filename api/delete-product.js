@@ -64,27 +64,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { id, enabled, name, price, description } = req.body || {};
+    const { id } = req.body || {};
 
     // Validate request
     if (!id) {
       return res.status(400).json({
         success: false,
         message: "Product id is required.",
-      });
-    }
-
-    const hasEnabledUpdate = typeof enabled === "boolean";
-    const hasName = typeof name === "string" && name.trim() !== "";
-    const hasPrice = typeof price === "string" && price.trim() !== "";
-    const hasDescription =
-      typeof description === "string" && description.trim() !== "";
-
-    if (!hasEnabledUpdate && !hasName && !hasPrice && !hasDescription) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Provide at least one field to update: enabled, name, price, or description.",
       });
     }
 
@@ -112,9 +98,9 @@ export default async function handler(req, res) {
 
     // Decode GitHub Base64 content
     const decoded = Buffer.from(
-  existingFile.content.replace(/\s/g, ""),
-  "base64"
-).toString("utf8");
+      existingFile.content.replace(/\s/g, ""),
+      "base64"
+    ).toString("utf8");
 
     let products;
 
@@ -129,37 +115,16 @@ export default async function handler(req, res) {
     }
 
     // Find product
-    const product = products.find((item) => item.id === id);
+    const productIndex = products.findIndex((item) => item.id === id);
 
-    if (!product) {
+    if (productIndex === -1) {
       return res.status(404).json({
         success: false,
         message: "Product not found.",
       });
     }
 
-    // Apply whichever fields were provided
-    const changeLabels = [];
-
-    if (hasEnabledUpdate) {
-      product.enabled = enabled;
-      changeLabels.push(enabled ? "enabled" : "disabled");
-    }
-
-    if (hasName) {
-      product.name = name.trim();
-      changeLabels.push("name updated");
-    }
-
-    if (hasPrice) {
-      product.price = price.trim();
-      changeLabels.push("price updated");
-    }
-
-    if (hasDescription) {
-      product.description = description.trim();
-      changeLabels.push("description updated");
-    }
+    const [deletedProduct] = products.splice(productIndex, 1);
 
     // Convert updated products.json to Base64
     const productsBase64 = Buffer.from(
@@ -168,26 +133,29 @@ export default async function handler(req, res) {
     ).toString("base64");
 
     // Save back to GitHub
+    // Note: this only removes the catalog entry. The underlying
+    // product image and .deepar effect files are left in place
+    // in GitHub/Blob storage (not deleted), so a delete is safe
+    // to retry and doesn't risk destroying shared assets.
     await saveGithubFile(
       productsPath,
       productsBase64,
-      `Update product (${changeLabels.join(", ")}): ${product.name}`,
+      `Delete product: ${deletedProduct.name}`,
       existingFile.sha
     );
 
     // Success response
     return res.status(200).json({
       success: true,
-      message: `Product updated successfully.`,
-      product,
+      message: "Product deleted successfully.",
+      product: deletedProduct,
     });
   } catch (error) {
-    console.error("UPDATE PRODUCT ERROR:", error);
+    console.error("DELETE PRODUCT ERROR:", error);
 
     return res.status(500).json({
       success: false,
-      message:
-        error?.message || "Failed to update product.",
+      message: error?.message || "Failed to delete product.",
     });
   }
 }
