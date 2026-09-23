@@ -514,6 +514,34 @@
             <label for="edit-description">Description</label>
             <textarea id="edit-description" required></textarea>
           </div>
+
+          <div class="field">
+            <label for="edit-image">Replace Product Image <span style="font-weight:500;color:var(--muted);">(optional)</span></label>
+            <div class="file-box">
+              <input
+                id="edit-image"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+              />
+              <div id="edit-image-info" class="file-info">
+                Leave empty to keep the current image
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="edit-effect">Replace DeepAR Effect <span style="font-weight:500;color:var(--muted);">(optional)</span></label>
+            <div class="file-box">
+              <input
+                id="edit-effect"
+                type="file"
+                accept=".deepar,application/octet-stream"
+              />
+              <div id="edit-effect-info" class="file-info">
+                Leave empty to keep the current effect
+              </div>
+            </div>
+          </div>
         </div>
 
         <div id="edit-status" class="status"></div>
@@ -552,9 +580,27 @@
     const editStatus = document.getElementById("edit-status");
     const editCancelButton = document.getElementById("edit-cancel");
     const editSaveButton = document.getElementById("edit-save");
+    const editImageInput = document.getElementById("edit-image");
+    const editEffectInput = document.getElementById("edit-effect");
+    const editImageInfo = document.getElementById("edit-image-info");
+    const editEffectInfo = document.getElementById("edit-effect-info");
 
     let editingProduct = null;
     let editingRowRefs = null;
+
+    editImageInput.addEventListener("change", () => {
+      const file = editImageInput.files[0];
+      editImageInfo.textContent = file
+        ? `${file.name} (${formatFileSize(file.size)})`
+        : "Leave empty to keep the current image";
+    });
+
+    editEffectInput.addEventListener("change", () => {
+      const file = editEffectInput.files[0];
+      editEffectInfo.textContent = file
+        ? `${file.name} (${formatFileSize(file.size)})`
+        : "Leave empty to keep the current effect";
+    });
 
     function showStatus(element, message, type) {
       element.textContent = message;
@@ -606,9 +652,11 @@
       });
     }
 
-    async function uploadEffectToBlob(file) {
+    async function uploadEffectToBlob(file, targetStatusEl) {
+      const statusEl = targetStatusEl || statusBox;
+
       showStatus(
-        statusBox,
+        statusEl,
         "Uploading DeepAR effect...",
         "loading"
       );
@@ -627,7 +675,7 @@
             );
 
             showStatus(
-              statusBox,
+              statusEl,
               `Uploading DeepAR effect... ${progress}%`,
               "loading"
             );
@@ -903,6 +951,11 @@
       editPriceInput.value = product.price || "";
       editDescriptionInput.value = product.description || "";
 
+      editImageInput.value = "";
+      editEffectInput.value = "";
+      editImageInfo.textContent = "Leave empty to keep the current image";
+      editEffectInfo.textContent = "Leave empty to keep the current effect";
+
       editStatus.className = "status";
       editStatus.textContent = "";
 
@@ -915,6 +968,8 @@
       editingProduct = null;
       editingRowRefs = null;
       editForm.reset();
+      editImageInfo.textContent = "Leave empty to keep the current image";
+      editEffectInfo.textContent = "Leave empty to keep the current effect";
     }
 
     editCancelButton.addEventListener("click", closeEditModal);
@@ -943,21 +998,63 @@
         return;
       }
 
+      const newImageFile = editImageInput.files[0];
+      const newEffectFile = editEffectInput.files[0];
+
+      if (
+        newEffectFile &&
+        !newEffectFile.name.toLowerCase().endsWith(".deepar")
+      ) {
+        showStatus(
+          editStatus,
+          "The selected effect must be a .deepar file.",
+          "error"
+        );
+        return;
+      }
+
+      if (newImageFile && newImageFile.size > 2.5 * 1024 * 1024) {
+        showStatus(
+          editStatus,
+          "Product image must be smaller than 2.5 MB.",
+          "error"
+        );
+        return;
+      }
+
       editSaveButton.disabled = true;
       editSaveButton.textContent = "Saving...";
 
       showStatus(editStatus, "Saving changes...", "loading");
 
       try {
+        const payload = {
+          id: editingProduct.id,
+          name,
+          price,
+          description,
+        };
+
+        if (newImageFile) {
+          showStatus(editStatus, "Preparing new image...", "loading");
+          payload.imageBase64 = await fileToBase64(newImageFile);
+          payload.imageName = newImageFile.name;
+        }
+
+        if (newEffectFile) {
+          payload.effectBlobPathname = await uploadEffectToBlob(
+            newEffectFile,
+            editStatus
+          );
+          payload.effectName = newEffectFile.name;
+        }
+
+        showStatus(editStatus, "Saving changes...", "loading");
+
         const response = await fetch("/api/update-product", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id: editingProduct.id,
-            name,
-            price,
-            description,
-          }),
+          body: JSON.stringify(payload),
         });
 
         const result = await response.json();
@@ -972,11 +1069,24 @@
         editingProduct.price = price;
         editingProduct.description = description;
 
+        if (result.product?.image) {
+          editingProduct.image = result.product.image;
+        }
+
+        if (result.product?.effect) {
+          editingProduct.effect = result.product.effect;
+        }
+
         if (editingRowRefs) {
           editingRowRefs.name.textContent = name;
           editingRowRefs.meta.textContent =
             `${price} • ${editingProduct.enabled === false ? "Hidden" : "Visible"}`;
           editingRowRefs.image.alt = name;
+
+          if (result.product?.image) {
+            editingRowRefs.image.style.visibility = "visible";
+            editingRowRefs.image.src = result.product.image;
+          }
         }
 
         showStatus(

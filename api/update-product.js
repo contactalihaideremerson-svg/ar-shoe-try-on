@@ -1,3 +1,13 @@
+import { get } from "@vercel/blob";
+
+function safeFilename(filename) {
+  return filename
+    .replace(/\\/g, "/")
+    .split("/")
+    .pop()
+    .replace(/[^a-zA-Z0-9._-]/g, "-");
+}
+
 async function getGithubFile(path) {
   const url =
     `https://api.github.com/repos/${process.env.GITHUB_OWNER}/${process.env.GITHUB_REPO}` +
@@ -64,7 +74,17 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { id, enabled, name, price, description } = req.body || {};
+    const {
+      id,
+      enabled,
+      name,
+      price,
+      description,
+      imageBase64,
+      imageName,
+      effectBlobPathname,
+      effectName,
+    } = req.body || {};
 
     // Validate request
     if (!id) {
@@ -79,12 +99,36 @@ export default async function handler(req, res) {
     const hasPrice = typeof price === "string" && price.trim() !== "";
     const hasDescription =
       typeof description === "string" && description.trim() !== "";
+    const hasImageUpdate =
+      typeof imageBase64 === "string" &&
+      imageBase64 !== "" &&
+      typeof imageName === "string" &&
+      imageName !== "";
+    const hasEffectUpdate =
+      typeof effectBlobPathname === "string" &&
+      effectBlobPathname !== "" &&
+      typeof effectName === "string" &&
+      effectName !== "";
 
-    if (!hasEnabledUpdate && !hasName && !hasPrice && !hasDescription) {
+    if (
+      !hasEnabledUpdate &&
+      !hasName &&
+      !hasPrice &&
+      !hasDescription &&
+      !hasImageUpdate &&
+      !hasEffectUpdate
+    ) {
       return res.status(400).json({
         success: false,
         message:
-          "Provide at least one field to update: enabled, name, price, or description.",
+          "Provide at least one field to update: enabled, name, price, description, image, or DeepAR effect.",
+      });
+    }
+
+    if (hasEffectUpdate && !effectName.toLowerCase().endsWith(".deepar")) {
+      return res.status(400).json({
+        success: false,
+        message: "The selected effect must be a .deepar file.",
       });
     }
 
@@ -159,6 +203,57 @@ export default async function handler(req, res) {
     if (hasDescription) {
       product.description = description.trim();
       changeLabels.push("description updated");
+    }
+
+    // -----------------------------------------------------
+    // Replace product image (uploaded as base64 from the
+    // browser, same as add-product.js)
+    // -----------------------------------------------------
+    if (hasImageUpdate) {
+      const imagePath = `public/assets/${Date.now()}-${safeFilename(imageName)}`;
+
+      await saveGithubFile(
+        imagePath,
+        imageBase64,
+        `Update product image: ${product.name}`
+      );
+
+      product.image = imagePath.replace(/^public\//, "");
+      changeLabels.push("image updated");
+    }
+
+    // -----------------------------------------------------
+    // Replace DeepAR effect (uploaded to a private Vercel
+    // Blob first, same flow as add-product.js, then copied
+    // into the repo)
+    // -----------------------------------------------------
+    if (hasEffectUpdate) {
+      const blobResult = await get(effectBlobPathname, {
+        access: "private",
+      });
+
+      if (!blobResult) {
+        throw new Error("DeepAR file was not found in Vercel Blob.");
+      }
+
+      const effectArrayBuffer = await new Response(
+        blobResult.stream
+      ).arrayBuffer();
+
+      const effectBase64 = Buffer.from(effectArrayBuffer).toString("base64");
+
+      const effectPath = `public/effects/${safeFilename(effectName)}`;
+      const existingEffect = await getGithubFile(effectPath);
+
+      await saveGithubFile(
+        effectPath,
+        effectBase64,
+        `Update DeepAR effect: ${product.name}`,
+        existingEffect?.sha
+      );
+
+      product.effect = effectPath.replace(/^public\//, "");
+      changeLabels.push("effect updated");
     }
 
     // Convert updated products.json to Base64
