@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>Our Story — KARIGAR</title>
+
+  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/5499/5499242.png" type="image/x-icon">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="karigar-theme.css">
+</head>
+
+<body class="kg-page">
+
+  <div id="karigar-header"></div>
+
+  <main>
+    <div class="kg-container">
+      <div class="kg-breadcrumbs">
+        <a href="index.html">Home</a> <span>/</span> <span>Our Story</span>
+      </div>
+    </div>
+
+    <div class="kg-page-header">
+      <span class="kg-eyebrow">Our Story</span>
+      <h1 class="kg-serif">More Than Footwear, A Heritage</h1>
+      <p>
+        KARIGAR means "artisan" — and every pair we make carries the hands,
+        patience, and tradition of the craftspeople behind it.
+      </p>
+    </div>
+
+    <section class="kg-section">
+      <div class="kg-container kg-about-grid">
+        <div class="kg-about-media">
+          <img src="assets/brand/hero-banner.jpg" alt="Handcrafted khussa detail">
+        </div>
+        <div class="kg-about-copy">
+          <span class="kg-eyebrow">Rooted in Tradition</span>
+          <h2 class="kg-serif">Handcrafted by Skilled Artisans</h2>
+          <p>
+            At KARIGAR, we celebrate the beauty of tradition with a modern touch.
+            Our khussas are handcrafted by skilled artisans, blending cultural
+            heritage with contemporary style for every woman who values
+            authenticity — stitched, beaded, and finished entirely by hand.
+          </p>
+          <p>
+            Every pattern tells a story passed down through generations of
+            craftsmanship, reimagined for the way you live today.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="kg-section kg-about-values">
+      <div class="kg-container">
+        <div class="kg-section-head">
+          <div>
+            <span class="kg-eyebrow">What We Stand For</span>
+            <h2>Our Values</h2>
+          </div>
+        </div>
+        <div class="kg-why-grid">
+          <div class="kg-why-item">
+            <div class="kg-why-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-6.7-4.35-9.3-8.1C.8 9.8 1.9 6 5.4 5.1c2-.5 3.9.4 5.1 2.1a1 1 0 0 0 1 0c1.2-1.7 3.1-2.6 5.1-2.1 3.5.9 4.6 4.7 2.7 7.8C18.7 16.65 12 21 12 21z"/></svg>
+            </div>
+            <strong>Traditional Craftsmanship</strong>
+            <span>Every stitch made entirely by hand</span>
+          </div>
+          <div class="kg-why-item">
+            <div class="kg-why-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 21v-7a8 8 0 0 1 16 0v7"/><path d="M4 14h16"/></svg>
+            </div>
+            <strong>Supporting Artisans</strong>
+            <span>Fair work for local craftspeople</span>
+          </div>
+          <div class="kg-why-item">
+            <div class="kg-why-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="9" r="6"/><path d="M9 14.5L7 22l5-3 5 3-2-7.5"/></svg>
+            </div>
+            <strong>Elegant Designs</strong>
+            <span>Heritage patterns, modern silhouettes</span>
+          </div>
+          <div class="kg-why-item">
+            <div class="kg-why-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            </div>
+            <strong>Modern Try-On</strong>
+            <span>See it on your feet before you buy</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="kg-section">
+      <div class="kg-container">
+        <div class="kg-cta-banner">
+          <h2 class="kg-serif">Ready to find your pair?</h2>
+          <a href="shop.html" class="kg-btn kg-btn-light">Shop the Collection →</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="kg-footer" id="karigar-footer"></footer>
+  <nav class="kg-bottom-nav" id="karigar-bottom-nav"></nav>
+
+  <script src="karigar-cart.js"></script>
+  <script src="karigar-chrome.js"></script>
+  <script>
+    KarigarChrome.init({ active: "about" });
+  </script>
+
+  <style>
+    .kg-about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 44px;
+      align-items: center;
+    }
+
+    .kg-about-media {
+      border-radius: var(--kg-radius-l);
+      overflow: hidden;
+      aspect-ratio: 4/3.2;
+    }
+
+    .kg-about-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .kg-about-copy h2 {
+      margin: 8px 0 16px;
+    }
+
+    .kg-about-copy p {
+      color: var(--kg-muted);
+      line-height: 1.8;
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    .kg-about-values {
+      background: var(--kg-beige);
+    }
+
+    .kg-cta-banner {
+      background: var(--kg-choc);
+      color: #fbf8f3;
+      border-radius: var(--kg-radius-l);
+      padding: 46px 30px;
+      text-align: center;
+    }
+
+    .kg-cta-banner h2 {
+      margin: 0 0 18px;
+      font-weight: 400;
+    }
+
+    @media (max-width: 900px) {
+      .kg-about-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+  </style>
+
+</body>
+
+</html>

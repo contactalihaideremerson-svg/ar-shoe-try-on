@@ -8,7 +8,11 @@
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
   />
 
-  <title>AR Shoe Try-On</title>
+  <title>AR Try-On — KARIGAR</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
 * {
@@ -85,7 +89,7 @@ body::after {
 #brand-text {
   position: fixed;
 
-  top: 22px;
+  top: 76px;
   left: 50%;
 
   transform: translateX(-50%);
@@ -175,7 +179,7 @@ body::after {
 #feet-text {
   position: fixed;
 
-  top: 92px;
+  top: 146px;
   left: 50%;
 
   transform: translateX(-50%);
@@ -543,7 +547,7 @@ body::after {
 @media (max-width: 600px) {
 
   #brand-text {
-    top: 14px;
+    top: 66px;
 
     padding: 9px 16px;
 
@@ -553,7 +557,7 @@ body::after {
   }
 
   #feet-text {
-    top: 66px;
+    top: 118px;
 
     font-size: 11px;
 
@@ -706,6 +710,200 @@ body::after {
     height: 260px;
   }
 }
+
+/* =====================================================
+   KARIGAR BRAND RESKIN
+   (colors/typography only — structural classes/ids
+   above are untouched and still driven by main.js)
+===================================================== */
+
+:root {
+  --kg-choc: #2c1810;
+  --kg-gold: #b8894f;
+  --kg-gold-soft: #d9b98a;
+  --kg-offwhite: #fbf8f3;
+  --kg-font-serif: "Marcellus", Georgia, serif;
+}
+
+.scan-frame {
+  border-color: rgba(217, 185, 138, 0.55);
+}
+
+.scan-frame::before,
+.scan-frame::after {
+  border-color: var(--kg-gold-soft);
+}
+
+.product-card.selected {
+  border-color: var(--kg-gold);
+  box-shadow:
+    0 0 0 2px rgba(184, 137, 79, 0.35),
+    0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.product-panel-title {
+  font-family: var(--kg-font-serif);
+  letter-spacing: 0.01em;
+}
+
+/* ---------------- AR HEADER ---------------- */
+
+.kg-ar-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 16px 18px calc(10px + env(safe-area-inset-top));
+
+  background: linear-gradient(to bottom, rgba(12, 8, 6, 0.75), transparent);
+}
+
+.kg-ar-header-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(15, 15, 15, 0.5);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.kg-ar-header-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+}
+
+.kg-ar-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  background: #502714;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.kg-ar-header-logo img {
+  display: block;
+  height: 20px;
+  width: auto;
+}
+
+.kg-ar-header-logo span:last-child {
+  margin-top: 4px;
+  font-family: Inter, sans-serif;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.kg-ar-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.kg-ar-help-popover {
+  position: fixed;
+  top: 68px;
+  right: 18px;
+  z-index: 41;
+  width: min(260px, calc(100vw - 36px));
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(15, 15, 15, 0.85);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 12.5px;
+  line-height: 1.6;
+  display: none;
+}
+
+.kg-ar-help-popover.kg-open {
+  display: block;
+}
+
+.kg-ar-help-popover strong {
+  display: block;
+  color: #fff;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+/* ---------------- AR BUY BAR ---------------- */
+
+.kg-ar-buy-bar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  width: min(1100px, 100%);
+  margin: 0 auto 12px;
+
+  padding: 12px 14px;
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.kg-ar-buy-info strong {
+  display: block;
+  font-size: 13px;
+  color: #171717;
+}
+
+.kg-ar-buy-info span {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: #6b6b6b;
+  font-weight: 700;
+}
+
+.kg-ar-buy-btn {
+  min-height: 42px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--kg-choc);
+  color: #fff;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .kg-ar-header {
+    padding: 12px 14px calc(8px + env(safe-area-inset-top));
+  }
+
+  .kg-ar-header-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .kg-ar-header-logo {
+    font-size: 15px;
+  }
+}
 </style>
 </head>
 
@@ -716,6 +914,36 @@ body::after {
   =================================================== -->
 
   <canvas id="deepar-canvas"></canvas>
+
+
+  <!-- ==================================================
+       KARIGAR AR HEADER (presentation only — does not
+       touch DeepAR/camera/tracking logic below)
+  =================================================== -->
+
+  <header class="kg-ar-header">
+
+    <button type="button" class="kg-ar-header-btn" id="kgArBack" aria-label="Back">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+
+    <span class="kg-ar-header-logo">
+      <span class="kg-ar-logo-badge"><img src="assets/brand/logo-dark.png" alt="KARIGAR"></span>
+      <span>Wear Your Heritage</span>
+    </span>
+
+    <div class="kg-ar-header-actions">
+      <button type="button" class="kg-ar-header-btn" id="kgArHelp" aria-label="Help">?</button>
+      <button type="button" class="kg-ar-header-btn" id="kgArClose" aria-label="Close">✕</button>
+    </div>
+
+  </header>
+
+  <div class="kg-ar-help-popover" id="kgArHelpPopover">
+    <strong>Tips for the best try-on</strong>
+    Point your camera down at both feet, keep them steady inside the guide,
+    and make sure you're in a well-lit space for accurate tracking.
+  </div>
 
 
   <!-- ==================================================
@@ -768,6 +996,14 @@ body::after {
 
   <section class="product-panel">
 
+    <div class="kg-ar-buy-bar" id="kgArBuyBar">
+      <div class="kg-ar-buy-info">
+        <strong id="kgArBuyName">—</strong>
+        <span id="kgArBuyPrice"></span>
+      </div>
+      <button type="button" class="kg-ar-buy-btn" id="kgArBuyAdd">Add to Cart</button>
+    </div>
+
     <div class="product-panel-header">
 
       <div class="product-panel-title">
@@ -816,10 +1052,19 @@ body::after {
 
 
   <!-- ==================================================
-       MAIN BUNDLE
+       MAIN BUNDLE (untouched — drives DeepAR + the
+       #product-list tray above)
   =================================================== -->
 
   <script src="main.js"></script>
+
+  <!-- ==================================================
+       KARIGAR CHROME (new header/buy-bar only)
+  =================================================== -->
+
+  <script src="karigar-cart.js"></script>
+  <script src="karigar-products.js"></script>
+  <script src="karigar-tryon-chrome.js"></script>
 
 </body>
 </html>

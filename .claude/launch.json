@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "karigar-dev",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["webpack", "serve", "--mode", "development", "--port", "9000"],
+      "port": 9000
+    }
+  ]
+}

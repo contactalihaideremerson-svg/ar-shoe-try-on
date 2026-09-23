@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>Product — KARIGAR</title>
+
+  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/5499/5499242.png" type="image/x-icon">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="karigar-theme.css">
+</head>
+
+<body class="kg-page">
+
+  <div id="karigar-header"></div>
+
+  <main>
+    <div class="kg-container">
+      <div class="kg-breadcrumbs">
+        <a href="index.html">Home</a> <span>/</span>
+        <a href="shop.html">Shop</a> <span>/</span>
+        <span id="kgBreadcrumbName">Product</span>
+      </div>
+    </div>
+
+    <div id="kgProductRoot" class="kg-container">
+      <div class="kg-product-loading">Loading product...</div>
+    </div>
+
+    <section class="kg-section kg-heritage-strip">
+      <div class="kg-container kg-heritage-grid">
+        <div class="kg-heritage-copy">
+          <span class="kg-eyebrow">Heritage in Every Stitch</span>
+          <h2 class="kg-serif">Handcrafted With Care</h2>
+          <ul class="kg-heritage-list">
+            <li>Premium quality materials</li>
+            <li>Comfortable for all-day wear</li>
+            <li>Perfect for weddings, festivals &amp; everyday fashion</li>
+            <li>Supports local artisans</li>
+          </ul>
+        </div>
+        <div class="kg-heritage-media">
+          <img src="assets/brand/hero-banner.jpg" alt="Step into tradition">
+          <span>Step Into<br>Tradition</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="kg-section">
+      <div class="kg-container">
+        <div class="kg-section-head">
+          <h2>You May Also Like</h2>
+          <a href="shop.html" class="kg-link-arrow">View All →</a>
+        </div>
+        <div class="kg-product-grid" id="kgRelatedGrid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="kg-footer" id="karigar-footer"></footer>
+  <nav class="kg-bottom-nav" id="karigar-bottom-nav"></nav>
+
+  <!-- Sticky mobile buy bar -->
+  <div class="kg-sticky-buy" id="kgStickyBuy" style="display:none;">
+    <div>
+      <strong id="kgStickyName"></strong>
+      <span id="kgStickyPrice"></span>
+    </div>
+    <button type="button" class="kg-btn kg-btn-primary" id="kgStickyAddCart">Add to Cart</button>
+  </div>
+
+  <script src="karigar-cart.js"></script>
+  <script src="karigar-products.js"></script>
+  <script src="karigar-chrome.js"></script>
+  <script>
+    KarigarChrome.init({ active: "shop" });
+
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get("id");
+    const root = document.getElementById("kgProductRoot");
+    const stickyBuy = document.getElementById("kgStickyBuy");
+
+    function priceLabel(price) {
+      return KarigarCart.formatPrice(price);
+    }
+
+    async function init() {
+      if (!productId) {
+        root.innerHTML = `<div class="kg-product-loading">No product selected. <a href="shop.html">Back to shop</a></div>`;
+        return;
+      }
+
+      const product = await KarigarProducts.getProductById(productId);
+
+      if (!product || product.enabled === false) {
+        root.innerHTML = `<div class="kg-product-loading">This khussa isn't available right now. <a href="shop.html">Back to shop</a></div>`;
+        return;
+      }
+
+      document.title = `${product.name} — KARIGAR`;
+      document.getElementById("kgBreadcrumbName").textContent = product.name;
+
+      const wishlisted = KarigarCart.isWishlisted(product.id);
+
+      root.innerHTML = `
+        <div class="kg-pd-grid">
+          <div class="kg-pd-gallery">
+            <img src="${KarigarProducts.escapeHtml(product.image)}" alt="${KarigarProducts.escapeHtml(product.name)}">
+          </div>
+
+          <div class="kg-pd-info">
+            <h1 class="kg-serif">${KarigarProducts.escapeHtml(product.name)}</h1>
+            <span class="kg-pd-tagline">Classic Elegance, Timeless Tradition</span>
+            <div class="kg-pd-price">${KarigarProducts.escapeHtml(priceLabel(product.price))}</div>
+            <p class="kg-pd-desc">${KarigarProducts.escapeHtml(product.description || "")}</p>
+
+            <div class="kg-pd-actions">
+              ${
+                product.effect
+                  ? `<button type="button" class="kg-btn kg-btn-primary kg-btn-block" id="kgTryOnBtn">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                      Try On with AR
+                    </button>`
+                  : ""
+              }
+              <button type="button" class="kg-btn kg-btn-outline kg-btn-block" id="kgAddCartBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+                Add to Cart
+              </button>
+              <button type="button" class="kg-pd-wishlist${wishlisted ? " kg-active" : ""}" id="kgWishlistBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="${wishlisted ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><path d="M12 21s-6.7-4.35-9.3-8.1C.8 9.8 1.9 6 5.4 5.1c2-.5 3.9.4 5.1 2.1a1 1 0 0 0 1 0c1.2-1.7 3.1-2.6 5.1-2.1 3.5.9 4.6 4.7 2.7 7.8C18.7 16.65 12 21 12 21z"/></svg>
+                Add to Wishlist
+              </button>
+            </div>
+
+            <div class="kg-pd-perks">
+              <div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-6.7-4.35-9.3-8.1C.8 9.8 1.9 6 5.4 5.1c2-.5 3.9.4 5.1 2.1a1 1 0 0 0 1 0c1.2-1.7 3.1-2.6 5.1-2.1 3.5.9 4.6 4.7 2.7 7.8C18.7 16.65 12 21 12 21z"/></svg><span>Handcrafted with Love</span></div>
+              <div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="9" r="6"/><path d="M9 14.5L7 22l5-3 5 3-2-7.5"/></svg><span>Premium Quality</span></div>
+              <div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg><span>Easy Returns</span></div>
+              <div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg><span>Secure Payments</span></div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const tryOnBtn = document.getElementById("kgTryOnBtn");
+      if (tryOnBtn) {
+        tryOnBtn.addEventListener("click", () => KarigarProducts.triggerArTryOn(product));
+      }
+
+      const addCartBtn = document.getElementById("kgAddCartBtn");
+      const addToCart = () => {
+        KarigarCart.addToCart(product, 1);
+        KarigarToast.show(`${product.name} added to cart`);
+      };
+      addCartBtn.addEventListener("click", addToCart);
+
+      document.getElementById("kgWishlistBtn").addEventListener("click", function () {
+        KarigarCart.toggleWishlist(product.id);
+        this.classList.toggle("kg-active");
+        const active = this.classList.contains("kg-active");
+        this.querySelector("svg").setAttribute("fill", active ? "currentColor" : "none");
+      });
+
+      document.getElementById("kgStickyName").textContent = product.name;
+      document.getElementById("kgStickyPrice").textContent = priceLabel(product.price);
+      document.getElementById("kgStickyAddCart").addEventListener("click", addToCart);
+      stickyBuy.style.display = "flex";
+
+      KarigarProducts.renderProductGrid(document.getElementById("kgRelatedGrid"), {
+        filter: (item) => item.id !== product.id,
+        limit: 4,
+        emptyMessage: "More khussas coming soon.",
+        onCartAdd: (item) => KarigarToast.show(`${item.name} added to cart`),
+      });
+    }
+
+    init();
+  </script>
+
+  <style>
+    .kg-product-loading {
+      padding: 80px 20px;
+      text-align: center;
+      color: var(--kg-muted);
+      font-size: 14px;
+    }
+
+    .kg-pd-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 46px;
+      padding: 10px 0 30px;
+    }
+
+    .kg-pd-gallery {
+      border-radius: var(--kg-radius-l);
+      overflow: hidden;
+      background: var(--kg-beige);
+      aspect-ratio: 1;
+    }
+
+    .kg-pd-gallery img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .kg-pd-info h1 {
+      margin: 0 0 6px;
+      font-weight: 400;
+      font-size: clamp(26px, 3.4vw, 34px);
+    }
+
+    .kg-pd-tagline {
+      display: block;
+      color: var(--kg-muted);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .kg-pd-price {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--kg-choc);
+      margin-bottom: 18px;
+    }
+
+    .kg-pd-desc {
+      color: var(--kg-muted);
+      line-height: 1.8;
+      font-size: 14px;
+      margin-bottom: 26px;
+      max-width: 480px;
+    }
+
+    .kg-pd-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 380px;
+      margin-bottom: 28px;
+    }
+
+    .kg-pd-wishlist {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      color: var(--kg-muted);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 6px;
+    }
+
+    .kg-pd-wishlist.kg-active {
+      color: #b23a3a;
+    }
+
+    .kg-pd-perks {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      border-top: 1px solid var(--kg-line);
+      padding-top: 22px;
+      max-width: 480px;
+    }
+
+    .kg-pd-perks div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-align: center;
+      color: var(--kg-choc);
+    }
+
+    .kg-pd-perks span {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--kg-muted);
+      line-height: 1.3;
+    }
+
+    .kg-heritage-strip {
+      background: var(--kg-beige);
+    }
+
+    .kg-heritage-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .kg-heritage-copy h2 {
+      margin: 8px 0 18px;
+    }
+
+    .kg-heritage-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .kg-heritage-list li {
+      position: relative;
+      padding-left: 26px;
+      font-size: 13.5px;
+      color: var(--kg-ink);
+    }
+
+    .kg-heritage-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--kg-choc);
+      color: #fff;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .kg-heritage-media {
+      position: relative;
+      border-radius: var(--kg-radius-l);
+      overflow: hidden;
+      aspect-ratio: 16/10;
+    }
+
+    .kg-heritage-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .kg-heritage-media span {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      color: #fff;
+      font-family: var(--kg-font-serif);
+      font-size: 20px;
+      text-align: right;
+      line-height: 1.3;
+      text-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .kg-sticky-buy {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 600;
+      background: var(--kg-offwhite);
+      border-top: 1px solid var(--kg-line);
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      box-shadow: 0 -8px 24px rgba(44, 24, 16, 0.08);
+    }
+
+    .kg-sticky-buy strong {
+      display: block;
+      font-size: 13.5px;
+    }
+
+    .kg-sticky-buy span {
+      display: block;
+      font-size: 12px;
+      color: var(--kg-muted);
+    }
+
+    @media (min-width: 901px) {
+      .kg-sticky-buy {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .kg-pd-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .kg-heritage-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .kg-pd-perks {
+        max-width: none;
+      }
+
+      body.kg-has-bottom-nav {
+        padding-bottom: 140px;
+      }
+
+      .kg-sticky-buy {
+        bottom: 66px;
+      }
+    }
+  </style>
+
+</body>
+
+</html>

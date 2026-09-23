@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>Checkout — KARIGAR</title>
+
+  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/5499/5499242.png" type="image/x-icon">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="karigar-theme.css">
+</head>
+
+<body class="kg-page">
+
+  <div id="karigar-header"></div>
+
+  <main>
+    <div class="kg-container">
+      <div class="kg-breadcrumbs">
+        <a href="index.html">Home</a> <span>/</span>
+        <a href="cart.html">Cart</a> <span>/</span> <span>Checkout</span>
+      </div>
+    </div>
+
+    <div class="kg-page-header" style="padding-top:10px;">
+      <h1 class="kg-serif">Checkout</h1>
+    </div>
+
+    <div class="kg-container">
+
+      <!-- ORDER FORM VIEW -->
+      <div class="kg-checkout-layout" id="kgCheckoutForm">
+        <form class="kg-checkout-fields" id="kgShippingForm" novalidate>
+          <h3 class="kg-serif">Shipping Details</h3>
+
+          <div class="kg-field-grid">
+            <div class="kg-field">
+              <label for="kgFullName">Full Name</label>
+              <input id="kgFullName" name="fullName" type="text" required>
+            </div>
+            <div class="kg-field">
+              <label for="kgPhone">Phone Number</label>
+              <input id="kgPhone" name="phone" type="tel" required>
+            </div>
+            <div class="kg-field" style="grid-column:1/-1;">
+              <label for="kgAddress">Delivery Address</label>
+              <input id="kgAddress" name="address" type="text" required>
+            </div>
+            <div class="kg-field">
+              <label for="kgCity">City</label>
+              <input id="kgCity" name="city" type="text" required>
+            </div>
+            <div class="kg-field">
+              <label for="kgEmail">Email (optional)</label>
+              <input id="kgEmail" name="email" type="email">
+            </div>
+          </div>
+
+          <h3 class="kg-serif" style="margin-top:28px;">Payment Method</h3>
+          <div class="kg-payment-option">
+            <input type="radio" id="kgCod" name="payment" checked readonly>
+            <label for="kgCod">
+              <strong>Cash on Delivery</strong>
+              <span>Pay in cash when your order arrives.</span>
+            </label>
+          </div>
+
+          <div id="kgCheckoutError" class="kg-checkout-error" style="display:none;"></div>
+
+          <button type="submit" class="kg-btn kg-btn-primary kg-btn-block" style="margin-top:22px;">
+            Place Order →
+          </button>
+        </form>
+
+        <aside class="kg-cart-summary" id="kgCheckoutSummary">
+          <h3 class="kg-serif">Order Summary</h3>
+          <div id="kgCheckoutItems"></div>
+          <div class="kg-cart-row"><span>Subtotal</span><span id="kgCheckoutSubtotal">Rs. 0</span></div>
+          <div class="kg-cart-row"><span>Shipping</span><span id="kgCheckoutShipping">Free</span></div>
+          <div class="kg-cart-row kg-cart-total"><span>Total</span><span id="kgCheckoutTotal">Rs. 0</span></div>
+        </aside>
+      </div>
+
+      <!-- CONFIRMATION VIEW -->
+      <div class="kg-order-confirm" id="kgOrderConfirm" style="display:none;">
+        <div class="kg-order-confirm-icon">✓</div>
+        <h2 class="kg-serif">Order Placed!</h2>
+        <p>Thank you — your order <strong id="kgOrderNumber"></strong> has been received.
+          We'll contact you to confirm delivery. Pay in cash when it arrives.</p>
+        <a href="shop.html" class="kg-btn kg-btn-primary">Continue Shopping →</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="kg-footer" id="karigar-footer"></footer>
+  <nav class="kg-bottom-nav" id="karigar-bottom-nav"></nav>
+
+  <script src="karigar-cart.js"></script>
+  <script src="karigar-products.js"></script>
+  <script src="karigar-chrome.js"></script>
+  <script>
+    KarigarChrome.init({ active: "cart" });
+
+    const formSection = document.getElementById("kgCheckoutForm");
+    const confirmSection = document.getElementById("kgOrderConfirm");
+    const itemsRoot = document.getElementById("kgCheckoutItems");
+    const errorBox = document.getElementById("kgCheckoutError");
+
+    function renderSummary() {
+      const cart = KarigarCart.getCart();
+
+      if (!cart.length) {
+        errorBox.textContent = "Your cart is empty. Add a khussa before checking out.";
+        errorBox.style.display = "block";
+        document.querySelector('#kgShippingForm button[type="submit"]').setAttribute("disabled", "true");
+      }
+
+      itemsRoot.innerHTML = cart
+        .map(
+          (item) => `
+          <div class="kg-checkout-line">
+            <span>${KarigarProducts.escapeHtml(item.name)} × ${item.qty}</span>
+            <span>${KarigarCart.formatPrice(KarigarCart.parsePrice(item.price) * item.qty)}</span>
+          </div>
+        `
+        )
+        .join("");
+
+      const totals = KarigarCart.getTotals();
+      document.getElementById("kgCheckoutSubtotal").textContent = `Rs. ${totals.subtotal.toLocaleString("en-PK")}`;
+      document.getElementById("kgCheckoutTotal").textContent = `Rs. ${totals.subtotal.toLocaleString("en-PK")}`;
+    }
+
+    document.getElementById("kgShippingForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      if (!KarigarCart.getCart().length) {
+        errorBox.textContent = "Your cart is empty. Add a khussa before checking out.";
+        errorBox.style.display = "block";
+        return;
+      }
+
+      const form = event.target;
+      if (!form.checkValidity()) {
+        errorBox.textContent = "Please fill in all required shipping details.";
+        errorBox.style.display = "block";
+        form.reportValidity();
+        return;
+      }
+
+      const orderNumber = `KG-${Date.now()}`;
+      document.getElementById("kgOrderNumber").textContent = orderNumber;
+
+      KarigarCart.clearCart();
+
+      formSection.style.display = "none";
+      confirmSection.style.display = "block";
+    });
+
+    renderSummary();
+  </script>
+
+  <style>
+    .kg-checkout-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 34px;
+      padding-bottom: 60px;
+      align-items: flex-start;
+    }
+
+    .kg-checkout-fields {
+      background: var(--kg-white);
+      border: 1px solid var(--kg-line);
+      border-radius: var(--kg-radius-m);
+      padding: 26px;
+    }
+
+    .kg-checkout-fields h3 {
+      margin: 0 0 16px;
+      font-weight: 400;
+      font-size: 18px;
+    }
+
+    .kg-field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .kg-payment-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+      border: 1px solid var(--kg-gold);
+      background: rgba(184, 137, 79, 0.08);
+      border-radius: var(--kg-radius-s);
+    }
+
+    .kg-payment-option label strong {
+      display: block;
+      font-size: 13.5px;
+      margin-bottom: 3px;
+    }
+
+    .kg-payment-option label span {
+      display: block;
+      font-size: 12px;
+      color: var(--kg-muted);
+    }
+
+    .kg-checkout-error {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #fdecec;
+      color: #a13030;
+      font-size: 12.5px;
+    }
+
+    .kg-checkout-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12.5px;
+      color: var(--kg-ink);
+      padding: 6px 0;
+    }
+
+    .kg-order-confirm {
+      max-width: 480px;
+      margin: 30px auto 70px;
+      text-align: center;
+      background: var(--kg-white);
+      border: 1px solid var(--kg-line);
+      border-radius: var(--kg-radius-l);
+      padding: 50px 30px;
+    }
+
+    .kg-order-confirm-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      background: var(--kg-choc);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+    }
+
+    .kg-order-confirm h2 {
+      margin: 0 0 12px;
+      font-weight: 400;
+    }
+
+    .kg-order-confirm p {
+      color: var(--kg-muted);
+      font-size: 13.5px;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .kg-checkout-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .kg-field-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+</body>
+
+</html>

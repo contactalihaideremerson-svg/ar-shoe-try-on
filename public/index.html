@@ -3,906 +3,495 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <title>PerfectMatch — AR Shoe Try-On</title>
+  <title>KARIGAR — Wear Your Heritage</title>
+  <meta name="description" content="KARIGAR — handcrafted Pakistani khussas blending heritage craftsmanship with modern luxury. Try them on virtually with AR before you buy.">
 
-  <link rel="shortcut icon"
-    href="https://cdn-icons-png.flaticon.com/512/5499/5499242.png"
-    type="image/x-icon">
+  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/5499/5499242.png" type="image/x-icon">
 
-  <!-- Existing styles -->
-  <link rel="stylesheet" href="main.css">
-  <link rel="stylesheet" href="mycss.css">
-
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <script src="bootstrap.bundle.min.js"></script>
-  <script src="myscript.js"></script>
+  <link rel="stylesheet" href="karigar-theme.css">
 </head>
 
-<body>
+<body class="kg-page">
 
-  <main class="pm-home">
+  <div id="karigar-header"></div>
 
-    <!-- Navigation -->
-    <nav class="pm-nav">
+  <main>
 
-      <a href="index.html" class="pm-brand">
-        <span class="pm-brand-icon">
-          👟
-        </span>
-
-        <span>
-          <strong>PerfectMatch</strong>
-          <small>AR Shoe Try-On</small>
-        </span>
-      </a>
-
-      <a href="privacy.html" class="pm-nav-link">
-        Privacy
-      </a>
-
-    </nav>
-
-
-    <!-- Hero -->
-    <section class="pm-hero">
-
-      <div class="pm-hero-content">
-
-        <div class="pm-eyebrow">
-          <span class="pm-live-dot"></span>
-          Virtual footwear experience
-        </div>
-
-        <h1>
-          Find your
-          <span>perfect pair.</span>
-        </h1>
-
-        <p class="pm-description">
-          Try shoes virtually using your camera and see how they look
-          on your feet before you buy.
-        </p>
-
-
-        <!-- CTA -->
-        <button
-          id="getStartBtn"
-          type="button"
-          class="pm-primary-btn">
-
-          <span>Try shoes virtually</span>
-
-          <span class="pm-arrow">
-            →
-          </span>
-
-        </button>
-
-
-        <p class="pm-privacy-note">
-          Camera access is required for the virtual try-on experience.
-        </p>
-
-
-        <!-- Features -->
-        <div class="pm-features">
-
-          <div class="pm-feature">
-            <div class="pm-feature-icon">◉</div>
-            <div>
-              <strong>Real-time AR</strong>
-              <span>See shoes on your feet</span>
-            </div>
-          </div>
-
-          <div class="pm-feature">
-            <div class="pm-feature-icon">✦</div>
-            <div>
-              <strong>Multiple styles</strong>
-              <span>Explore different shoes</span>
-            </div>
-          </div>
-
-          <div class="pm-feature">
-            <div class="pm-feature-icon">✓</div>
-            <div>
-              <strong>Easy to use</strong>
-              <span>No app installation</span>
-            </div>
-          </div>
-
-        </div>
-
+    <!-- ================= HERO ================= -->
+    <section class="kg-hero">
+      <div class="kg-hero-media">
+        <img src="assets/brand/hero-banner.jpg" alt="Handcrafted khussa on a heritage backdrop">
+        <div class="kg-hero-scrim"></div>
       </div>
 
+      <div class="kg-hero-content">
+        <span class="kg-eyebrow" style="color:#d9b98a;">Tradition in Every Step</span>
+        <h1 class="kg-serif">Timeless<br>Khussa</h1>
+        <p>Handcrafted elegance for the modern you. Experience tradition, comfort and style.</p>
 
-      <!-- Product Visual -->
-      <div class="pm-visual">
-
-        <div class="pm-glow"></div>
-
-        <div class="pm-image-card">
-
-          <img
-            src="store.jpg"
-            alt="PerfectMatch virtual shoe try-on">
-
-          <div class="pm-image-overlay"></div>
-
-          <div class="pm-floating-card">
-
-            <div class="pm-mini-shoe">
-              👟
-            </div>
-
-            <div>
-              <strong>Virtual Try-On</strong>
-              <span>Ready when you are</span>
-            </div>
-
-            <div class="pm-check">
-              ✓
-            </div>
-
-          </div>
-
+        <div class="kg-hero-cta">
+          <a href="shop.html" class="kg-btn kg-btn-light">Shop Now →</a>
+          <a href="tryon.html" class="kg-btn kg-btn-outline kg-btn-outline-dark">Try On with AR</a>
         </div>
-
-        <div class="pm-circle pm-circle-one"></div>
-        <div class="pm-circle pm-circle-two"></div>
-
       </div>
 
+      <span class="kg-hero-script">Step into<br>Tradition</span>
     </section>
 
-
-    <!-- Bottom trust section -->
-    <section class="pm-bottom">
-
-      <div>
-        <strong>See it.</strong>
-        <span>Try it.</span>
-        <strong>Love it.</strong>
+    <!-- ================= TRUST STRIP ================= -->
+    <section class="kg-trust">
+      <div class="kg-trust-inner">
+        <div class="kg-trust-item">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17.5" cy="18" r="1.6"/></svg>
+          <div><strong>Free Shipping</strong><span>On Orders Over Rs. 2000</span></div>
+        </div>
+        <div class="kg-trust-item">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+          <div><strong>Secure Payments</strong><span>100% Safe &amp; Secure</span></div>
+        </div>
+        <div class="kg-trust-item">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+          <div><strong>Easy Returns</strong><span>Hassle Free Returns</span></div>
+        </div>
+        <div class="kg-trust-item">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-6.7-4.35-9.3-8.1C.8 9.8 1.9 6 5.4 5.1c2-.5 3.9.4 5.1 2.1a1 1 0 0 0 1 0c1.2-1.7 3.1-2.6 5.1-2.1 3.5.9 4.6 4.7 2.7 7.8C18.7 16.65 12 21 12 21z"/></svg>
+          <div><strong>Handcrafted Quality</strong><span>Made with Love</span></div>
+        </div>
       </div>
+    </section>
 
-      <p>
-        Virtual fit. Real style.
-      </p>
+    <!-- ================= FEATURED PRODUCTS ================= -->
+    <section class="kg-section">
+      <div class="kg-container">
+        <div class="kg-section-head">
+          <div>
+            <span class="kg-eyebrow">Our Collection</span>
+            <h2>Featured Khussas</h2>
+          </div>
+          <a href="shop.html" class="kg-link-arrow">View All Products →</a>
+        </div>
 
+        <div class="kg-product-grid" id="kgFeaturedGrid"></div>
+      </div>
+    </section>
+
+    <!-- ================= AR PROMO ================= -->
+    <section class="kg-section kg-ar-promo">
+      <div class="kg-container kg-ar-promo-inner">
+        <div class="kg-ar-promo-copy">
+          <span class="kg-eyebrow">Virtual Try-On</span>
+          <h2 class="kg-serif">Find Your Perfect Pair — Virtually</h2>
+          <p>
+            See exactly how each khussa looks on your own feet before you buy.
+            Point your camera down, pick a style, and watch it appear in real time —
+            no fitting room required.
+          </p>
+          <a href="tryon.html" class="kg-btn kg-btn-primary">Try On Now →</a>
+        </div>
+        <div class="kg-ar-promo-visual">
+          <div class="kg-ar-promo-badge">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            <div><strong>AR Powered</strong><span>Real-time foot tracking</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= OUR STORY ================= -->
+    <section class="kg-section">
+      <div class="kg-container kg-story-grid">
+        <div class="kg-story-copy">
+          <span class="kg-eyebrow">Our Story</span>
+          <h2 class="kg-serif">More Than Footwear,<br>A Heritage</h2>
+          <p>
+            At KARIGAR, we celebrate the beauty of tradition with a modern touch.
+            Our khussas are handcrafted by skilled artisans, blending cultural
+            heritage with contemporary style for every woman who values authenticity.
+          </p>
+          <a href="about.html" class="kg-btn kg-btn-outline">Our Story →</a>
+        </div>
+        <div class="kg-story-media">
+          <img src="assets/brand/story-crafted-for-every-journey.webp" alt="Crafted for Every Journey">
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= COLLECTIONS TEASER ================= -->
+    <section class="kg-section kg-collections" id="collections">
+      <div class="kg-container kg-collections-grid">
+        <a href="shop.html" class="kg-collection-card">
+          <img src="assets/brand/collection-traditional-craftsmanship.webp" alt="Traditional Craftsmanship — Learn More">
+        </a>
+        <a href="shop.html" class="kg-collection-card">
+          <img src="assets/brand/collection-elegant-designs.webp" alt="Elegant Designs — Shop Now">
+        </a>
+        <a href="about.html" class="kg-collection-card">
+          <img src="assets/brand/collection-supporting-artisans.webp" alt="Supporting Artisans — Our Impact">
+        </a>
+      </div>
+    </section>
+
+    <!-- ================= WHY KARIGAR ================= -->
+    <section class="kg-section kg-why">
+      <div class="kg-container">
+        <div class="kg-section-head">
+          <div>
+            <span class="kg-eyebrow">Why KARIGAR</span>
+            <h2>Crafted With Care</h2>
+          </div>
+        </div>
+        <div class="kg-why-grid">
+          <div class="kg-why-item">
+            <div class="kg-why-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-6.7-4.35-9.3-8.1C.8 9.8 1.9 6 5.4 5.1c2-.5 3.9.4 5.1 2.1a1 1 0 0 0 1 0c1.2-1.7 3.1-2.6 5.1-2.1 3.5.9 4.6 4.7 2.7 7.8C18.7 16.65 12 21 12 21z"/></svg>
+            </div>
+            <strong>Handcrafted with Love</strong>
+            <span>Every pair made by skilled artisans</span>
+          </div>
+          <div class="kg-why-item">
+            <div class="kg-why-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="9" r="6"/><path d="M9 14.5L7 22l5-3 5 3-2-7.5"/></svg>
+            </div>
+            <strong>Premium Quality</strong>
+            <span>Only the finest materials</span>
+          </div>
+          <div class="kg-why-item">
+            <div class="kg-why-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg>
+            </div>
+            <strong>Easy Returns</strong>
+            <span>Hassle free return policy</span>
+          </div>
+          <div class="kg-why-item">
+            <div class="kg-why-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <strong>Secure Payments</strong>
+            <span>Cash on delivery, always safe</span>
+          </div>
+        </div>
+      </div>
     </section>
 
   </main>
 
+  <footer class="kg-footer" id="karigar-footer"></footer>
+  <nav class="kg-bottom-nav" id="karigar-bottom-nav"></nav>
 
-  <!-- Existing application bundle -->
-  <script src="main.js"></script>
+  <script src="karigar-cart.js"></script>
+  <script src="karigar-products.js"></script>
+  <script src="karigar-chrome.js"></script>
+  <script>
+    KarigarChrome.init({ active: "home" });
 
+    KarigarProducts.renderProductGrid(
+      document.getElementById("kgFeaturedGrid"),
+      {
+        limit: 4,
+        emptyMessage: "New khussas are on their way — check back soon.",
+        onCartAdd: (product) => KarigarToast.show(`${product.name} added to cart`),
+      }
+    );
+  </script>
 
   <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      min-height: 100%;
-      font-family: "Inter", sans-serif;
-      background: #f7f7f5;
-      color: #111111;
-    }
-
-    body {
-      overflow-x: hidden;
-    }
-
-    button,
-    a {
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .pm-home {
-      min-height: 100vh;
-      min-height: 100dvh;
+    /* ---------------- HERO ---------------- */
+    .kg-hero {
       position: relative;
+      min-height: 560px;
+      display: flex;
+      align-items: center;
       overflow: hidden;
-      background:
-        radial-gradient(circle at 85% 20%, rgba(216, 226, 255, 0.55), transparent 30%),
-        radial-gradient(circle at 10% 85%, rgba(235, 225, 255, 0.5), transparent 30%),
-        #f8f8f6;
+      color: #fbf8f3;
     }
 
-
-    /* NAV */
-
-    .pm-nav {
-      position: relative;
-      z-index: 10;
-
-      width: min(1180px, calc(100% - 48px));
-      margin: auto;
-      padding: 24px 0;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .pm-brand {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-
-      color: #111;
-      text-decoration: none;
-    }
-
-    .pm-brand-icon {
-      width: 42px;
-      height: 42px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      border-radius: 13px;
-
-      background: #111;
-      color: white;
-
-      font-size: 20px;
-
-      box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.12);
-    }
-
-    .pm-brand strong {
-      display: block;
-      font-size: 17px;
-      font-weight: 800;
-      letter-spacing: -0.4px;
-    }
-
-    .pm-brand small {
-      display: block;
-      margin-top: 2px;
-
-      font-size: 10px;
-      font-weight: 500;
-
-      color: #858585;
-      letter-spacing: 0.3px;
-    }
-
-    .pm-nav-link {
-      color: #555;
-      text-decoration: none;
-
-      font-size: 13px;
-      font-weight: 600;
-
-      padding: 10px 15px;
-
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      border-radius: 999px;
-
-      background: rgba(255, 255, 255, 0.65);
-      backdrop-filter: blur(10px);
-
-      transition: 0.2s ease;
-    }
-
-    .pm-nav-link:hover {
-      color: #111;
-      background: white;
-    }
-
-
-    /* HERO */
-
-    .pm-hero {
-      width: min(1180px, calc(100% - 48px));
-      margin: auto;
-
-      min-height: calc(100vh - 100px);
-      min-height: calc(100dvh - 100px);
-
-      display: grid;
-      grid-template-columns: 1fr 0.9fr;
-      align-items: center;
-      gap: 70px;
-
-      padding: 30px 0 70px;
-    }
-
-
-    .pm-hero-content {
-      position: relative;
-      z-index: 3;
-      max-width: 570px;
-    }
-
-
-    /* EYEBROW */
-
-    .pm-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-
-      padding: 8px 13px;
-
-      border-radius: 999px;
-
-      background: rgba(255, 255, 255, 0.72);
-      border: 1px solid rgba(0, 0, 0, 0.06);
-
-      color: #686868;
-
-      font-size: 11px;
-      font-weight: 600;
-
-      letter-spacing: 0.2px;
-    }
-
-    .pm-live-dot {
-      width: 7px;
-      height: 7px;
-
-      border-radius: 50%;
-      background: #32c56a;
-
-      box-shadow: 0 0 0 4px rgba(50, 197, 106, 0.12);
-    }
-
-
-    /* TITLE */
-
-    .pm-hero h1 {
-      margin: 23px 0 18px;
-
-      font-size: clamp(48px, 6vw, 82px);
-      line-height: 0.98;
-
-      font-weight: 800;
-      letter-spacing: -4px;
-    }
-
-    .pm-hero h1 span {
-      display: block;
-
-      background: linear-gradient(
-        100deg,
-        #111,
-        #656565
-      );
-
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-
-    .pm-description {
-      max-width: 500px;
-
-      margin: 0 0 27px;
-
-      color: #666;
-
-      font-size: 16px;
-      line-height: 1.7;
-    }
-
-
-    /* CTA */
-
-    .pm-primary-btn {
-      border: 0;
-      outline: none;
-
-      min-height: 58px;
-      padding: 0 8px 0 23px;
-
-      display: inline-flex;
-      align-items: center;
-      gap: 20px;
-
-      border-radius: 999px;
-
-      background: #111;
-      color: white;
-
-      font-family: inherit;
-      font-size: 14px;
-      font-weight: 700;
-
-      cursor: pointer;
-
-      box-shadow:
-        0 15px 35px rgba(0, 0, 0, 0.18);
-
-      transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-    }
-
-    .pm-primary-btn:hover {
-      transform: translateY(-2px);
-
-      box-shadow:
-        0 18px 40px rgba(0, 0, 0, 0.22);
-    }
-
-    .pm-primary-btn:active {
-      transform: scale(0.97);
-    }
-
-    .pm-arrow {
-      width: 43px;
-      height: 43px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      border-radius: 50%;
-
-      background: white;
-      color: #111;
-
-      font-size: 20px;
-    }
-
-
-    .pm-privacy-note {
-      margin: 12px 0 0 7px;
-
-      color: #999;
-
-      font-size: 10px;
-    }
-
-
-    /* FEATURES */
-
-    .pm-features {
-      display: flex;
-      gap: 30px;
-
-      margin-top: 45px;
-    }
-
-    .pm-feature {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .pm-feature-icon {
-      width: 32px;
-      height: 32px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      border-radius: 10px;
-
-      background: white;
-
-      box-shadow:
-        0 5px 15px rgba(0, 0, 0, 0.05);
-
-      font-size: 13px;
-    }
-
-    .pm-feature strong,
-    .pm-feature span {
-      display: block;
-    }
-
-    .pm-feature strong {
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .pm-feature span {
-      margin-top: 2px;
-
-      color: #999;
-
-      font-size: 9px;
-    }
-
-
-    /* PRODUCT VISUAL */
-
-    .pm-visual {
-      position: relative;
-
-      min-height: 600px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .pm-glow {
+    .kg-hero-media {
       position: absolute;
-
-      width: 480px;
-      height: 480px;
-
-      border-radius: 50%;
-
-      background:
-        radial-gradient(
-          circle,
-          rgba(188, 201, 255, 0.55),
-          rgba(240, 235, 255, 0.1) 65%,
-          transparent 70%
-        );
-
-      filter: blur(5px);
+      inset: 0;
+      z-index: 0;
     }
 
-    .pm-image-card {
-      position: relative;
-      z-index: 2;
-
-      width: min(470px, 90%);
-
-      aspect-ratio: 0.82;
-
-      overflow: hidden;
-
-      border-radius: 38px;
-
-      background: #ddd;
-
-      box-shadow:
-        0 35px 80px rgba(0, 0, 0, 0.17);
-
-      transform: rotate(2deg);
-    }
-
-    .pm-image-card img {
+    .kg-hero-media img {
       width: 100%;
       height: 100%;
-
       object-fit: cover;
+    }
 
+    .kg-hero-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(100deg, rgba(28, 16, 10, 0.82) 0%, rgba(28, 16, 10, 0.45) 55%, rgba(28, 16, 10, 0.15) 100%);
+    }
+
+    .kg-hero-content {
+      position: relative;
+      z-index: 2;
+      width: min(1240px, calc(100% - 40px));
+      margin: 0 auto;
+      max-width: 540px;
+      padding: 70px 0;
+    }
+
+    .kg-hero-content h1 {
+      margin: 14px 0 16px;
+      font-weight: 400;
+      font-size: clamp(44px, 6vw, 68px);
+      line-height: 1.05;
+    }
+
+    .kg-hero-content p {
+      max-width: 420px;
+      margin: 0 0 26px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: rgba(251, 248, 243, 0.85);
+    }
+
+    .kg-hero-cta {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .kg-btn-outline-dark {
+      border-color: rgba(251, 248, 243, 0.55);
+      color: #fbf8f3;
+    }
+
+    .kg-btn-outline-dark:hover {
+      background: rgba(251, 248, 243, 0.12);
+      color: #fbf8f3;
+    }
+
+    .kg-hero-script {
+      position: absolute;
+      right: 6%;
+      bottom: 10%;
+      z-index: 2;
+      font-family: var(--kg-font-serif);
+      font-style: italic;
+      font-size: 22px;
+      line-height: 1.3;
+      color: rgba(251, 248, 243, 0.9);
+      text-align: right;
+    }
+
+    /* ---------------- AR PROMO ---------------- */
+    .kg-ar-promo {
+      background: var(--kg-choc);
+      color: #fbf8f3;
+    }
+
+    .kg-ar-promo-inner {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .kg-ar-promo h2 {
+      margin: 8px 0 16px;
+      font-weight: 400;
+      font-size: clamp(26px, 3.4vw, 36px);
+    }
+
+    .kg-ar-promo p {
+      color: rgba(251, 248, 243, 0.75);
+      line-height: 1.75;
+      font-size: 14.5px;
+      max-width: 480px;
+      margin-bottom: 24px;
+    }
+
+    .kg-ar-promo-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .kg-ar-promo-badge {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 26px 30px;
+      border-radius: 22px;
+      border: 1px solid rgba(251, 248, 243, 0.18);
+      background: rgba(251, 248, 243, 0.06);
+    }
+
+    .kg-ar-promo-badge strong {
       display: block;
+      font-size: 15px;
+    }
 
+    .kg-ar-promo-badge span {
+      display: block;
+      margin-top: 3px;
+      font-size: 12px;
+      color: rgba(251, 248, 243, 0.65);
+    }
+
+    /* ---------------- STORY ---------------- */
+    .kg-story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 50px;
+      align-items: center;
+    }
+
+    .kg-story-copy h2 {
+      margin: 8px 0 16px;
+    }
+
+    .kg-story-copy p {
+      color: var(--kg-muted);
+      line-height: 1.8;
+      font-size: 14.5px;
+      margin-bottom: 22px;
+    }
+
+    .kg-story-media {
+      position: relative;
+      border-radius: var(--kg-radius-l);
+      overflow: hidden;
+      aspect-ratio: 4/3;
+    }
+
+    .kg-story-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* ---------------- COLLECTIONS ---------------- */
+    .kg-collections-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .kg-collection-card {
+      position: relative;
+      min-height: 210px;
+      border-radius: var(--kg-radius-m);
+      overflow: hidden;
+      display: block;
+    }
+
+    .kg-collection-card img {
+      width: 100%;
+      height: 100%;
+      min-height: 210px;
+      object-fit: cover;
+      transition: transform 0.35s ease;
+    }
+
+    .kg-collection-card:hover img {
       transform: scale(1.04);
     }
 
-    .pm-image-overlay {
-      position: absolute;
-      inset: 0;
-
-      background:
-        linear-gradient(
-          to top,
-          rgba(0, 0, 0, 0.42),
-          transparent 45%
-        );
+    /* ---------------- WHY KARIGAR ---------------- */
+    .kg-why {
+      background: var(--kg-beige);
     }
 
-
-    /* FLOATING CARD */
-
-    .pm-floating-card {
-      position: absolute;
-
-      left: 20px;
-      right: 20px;
-      bottom: 20px;
-
-      display: flex;
-      align-items: center;
-
-      gap: 11px;
-
-      padding: 12px;
-
-      border-radius: 18px;
-
-      background: rgba(255, 255, 255, 0.92);
-
-      backdrop-filter: blur(15px);
-
-      box-shadow:
-        0 12px 35px rgba(0, 0, 0, 0.15);
-
-      transform: rotate(-2deg);
+    .kg-why-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
     }
 
-    .pm-mini-shoe {
-      width: 40px;
-      height: 40px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      border-radius: 13px;
-
-      background: #f0f0f0;
-
-      font-size: 20px;
-    }
-
-    .pm-floating-card strong {
-      display: block;
-
-      font-size: 12px;
-    }
-
-    .pm-floating-card span {
-      display: block;
-
-      margin-top: 3px;
-
-      color: #888;
-
-      font-size: 9px;
-    }
-
-    .pm-check {
-      margin-left: auto;
-
-      width: 28px;
-      height: 28px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      border-radius: 50%;
-
-      background: #28bd68;
-      color: white;
-
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-
-    .pm-circle {
-      position: absolute;
-
-      border-radius: 50%;
-
-      border: 1px solid rgba(0, 0, 0, 0.06);
-    }
-
-    .pm-circle-one {
-      width: 80px;
-      height: 80px;
-
-      right: 5%;
-      top: 18%;
-    }
-
-    .pm-circle-two {
-      width: 35px;
-      height: 35px;
-
-      left: 6%;
-      bottom: 20%;
-    }
-
-
-    /* BOTTOM */
-
-    .pm-bottom {
-      position: absolute;
-
-      bottom: 20px;
-      left: 50%;
-
-      transform: translateX(-50%);
-
+    .kg-why-item {
+      background: var(--kg-white);
+      border-radius: var(--kg-radius-m);
+      padding: 24px 20px;
       text-align: center;
-
-      white-space: nowrap;
+      border: 1px solid var(--kg-line);
     }
 
-    .pm-bottom div {
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: -0.3px;
+    .kg-why-icon {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      background: var(--kg-beige);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--kg-choc);
     }
 
-    .pm-bottom strong {
-      font-weight: 800;
+    .kg-why-item strong {
+      display: block;
+      font-size: 13.5px;
+      margin-bottom: 5px;
     }
 
-    .pm-bottom span {
-      color: #777;
+    .kg-why-item span {
+      display: block;
+      font-size: 12px;
+      color: var(--kg-muted);
+      line-height: 1.5;
     }
 
-    .pm-bottom p {
-      margin: 5px 0 0;
-
-      color: #aaa;
-
-      font-size: 8px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-    }
-
-
-    /* MOBILE */
-
-    @media (max-width: 850px) {
-
-      .pm-nav {
-        width: calc(100% - 32px);
-        padding: 18px 0;
+    /* ---------------- MOBILE ---------------- */
+    @media (max-width: 900px) {
+      .kg-hero {
+        min-height: 460px;
       }
 
-      .pm-nav-link {
-        font-size: 11px;
-        padding: 8px 12px;
-      }
-
-      .pm-hero {
-        width: calc(100% - 32px);
-
-        display: flex;
-        flex-direction: column;
-
-        align-items: stretch;
-
-        gap: 30px;
-
-        padding-top: 35px;
-        padding-bottom: 110px;
-
-        min-height: auto;
-      }
-
-      .pm-hero-content {
+      .kg-hero-content {
+        padding: 46px 0;
         max-width: none;
       }
 
-      .pm-eyebrow {
-        font-size: 10px;
+      .kg-hero-script {
+        display: none;
       }
 
-      .pm-hero h1 {
-        margin-top: 18px;
-
-        font-size: clamp(45px, 13vw, 68px);
-
-        letter-spacing: -3px;
+      .kg-ar-promo-inner {
+        grid-template-columns: 1fr;
+        text-align: left;
       }
 
-      .pm-description {
-        font-size: 14px;
-        line-height: 1.6;
-
-        max-width: 390px;
+      .kg-ar-promo-visual {
+        justify-content: flex-start;
       }
 
-      .pm-primary-btn {
-        width: 100%;
-        justify-content: space-between;
-
-        min-height: 58px;
+      .kg-story-grid {
+        grid-template-columns: 1fr;
+        gap: 26px;
       }
 
-      .pm-features {
-        margin-top: 27px;
+      .kg-story-media {
+        order: -1;
+      }
 
-        display: grid;
+      .kg-collections-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .kg-why-grid {
         grid-template-columns: 1fr 1fr;
-
-        gap: 16px;
-      }
-
-      .pm-feature:last-child {
-        grid-column: span 2;
-      }
-
-      .pm-visual {
-        min-height: 390px;
-      }
-
-      .pm-image-card {
-        width: min(370px, 88%);
-        border-radius: 28px;
-      }
-
-      .pm-glow {
-        width: 360px;
-        height: 360px;
-      }
-
-      .pm-bottom {
-        bottom: 15px;
-      }
-
-      .pm-bottom div {
-        font-size: 12px;
       }
     }
 
-
-    /* SMALL PHONES */
-
-    @media (max-width: 430px) {
-
-      .pm-brand-icon {
-        width: 38px;
-        height: 38px;
-
-        border-radius: 11px;
+    @media (max-width: 480px) {
+      .kg-hero-cta {
+        flex-direction: column;
+        align-items: stretch;
       }
 
-      .pm-brand strong {
-        font-size: 15px;
-      }
-
-      .pm-hero {
-        padding-top: 28px;
-      }
-
-      .pm-hero h1 {
-        font-size: 47px;
-        letter-spacing: -2.8px;
-      }
-
-      .pm-description {
-        font-size: 13px;
-      }
-
-      .pm-features {
-        gap: 12px;
-      }
-
-      .pm-feature {
-        gap: 7px;
-      }
-
-      .pm-feature-icon {
-        width: 29px;
-        height: 29px;
-      }
-
-      .pm-feature strong {
-        font-size: 10px;
-      }
-
-      .pm-feature span {
-        font-size: 8px;
-      }
-
-      .pm-visual {
-        min-height: 350px;
-      }
-
-      .pm-floating-card {
-        left: 12px;
-        right: 12px;
-        bottom: 12px;
+      .kg-hero-cta .kg-btn {
+        width: 100%;
       }
     }
-
   </style>
 
 </body>

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>Shop Khussas — KARIGAR</title>
+  <meta name="description" content="Browse handcrafted KARIGAR khussas — traditional embroidery, modern comfort. Try any pair on virtually with AR.">
+
+  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/5499/5499242.png" type="image/x-icon">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="karigar-theme.css">
+</head>
+
+<body class="kg-page">
+
+  <div id="karigar-header"></div>
+
+  <main>
+    <div class="kg-container">
+      <div class="kg-breadcrumbs">
+        <a href="index.html">Home</a> <span>/</span> <span>Shop</span>
+      </div>
+    </div>
+
+    <div class="kg-page-header">
+      <span class="kg-eyebrow">Our Collection</span>
+      <h1 class="kg-serif">Shop All Khussas</h1>
+      <p>Handcrafted by skilled artisans — every pair blends traditional embroidery with everyday comfort.</p>
+    </div>
+
+    <div class="kg-container">
+      <div class="kg-shop-toolbar">
+        <span class="kg-shop-count" id="kgShopCount">Loading products...</span>
+        <div class="kg-shop-controls">
+          <select id="kgSortSelect" class="kg-shop-select">
+            <option value="default">Sort: Featured</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="name-asc">Name: A–Z</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="kg-product-grid" id="kgShopGrid"></div>
+    </div>
+  </main>
+
+  <footer class="kg-footer" id="karigar-footer"></footer>
+  <nav class="kg-bottom-nav" id="karigar-bottom-nav"></nav>
+
+  <script src="karigar-cart.js"></script>
+  <script src="karigar-products.js"></script>
+  <script src="karigar-chrome.js"></script>
+  <script>
+    KarigarChrome.init({ active: "shop" });
+
+    const grid = document.getElementById("kgShopGrid");
+    const countEl = document.getElementById("kgShopCount");
+    const sortSelect = document.getElementById("kgSortSelect");
+
+    const params = new URLSearchParams(window.location.search);
+    const query = (params.get("q") || "").trim().toLowerCase();
+
+    const sorters = {
+      default: null,
+      "price-asc": (a, b) => KarigarCart.parsePrice(a.price) - KarigarCart.parsePrice(b.price),
+      "price-desc": (a, b) => KarigarCart.parsePrice(b.price) - KarigarCart.parsePrice(a.price),
+      "name-asc": (a, b) => String(a.name).localeCompare(String(b.name)),
+    };
+
+    async function renderShop() {
+      const products = await KarigarProducts.renderProductGrid(grid, {
+        filter: query
+          ? (product) => String(product.name).toLowerCase().includes(query)
+          : undefined,
+        sort: sorters[sortSelect.value] || undefined,
+        emptyMessage: query
+          ? `No khussas match "${query}".`
+          : "No khussas are currently available. Please check back soon.",
+        onCartAdd: (product) => KarigarToast.show(`${product.name} added to cart`),
+      });
+
+      countEl.textContent = `${products.length} product${products.length === 1 ? "" : "s"}${query ? ` for "${query}"` : ""}`;
+    }
+
+    sortSelect.addEventListener("change", renderShop);
+    renderShop();
+  </script>
+
+  <style>
+    .kg-shop-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .kg-shop-count {
+      font-size: 13px;
+      color: var(--kg-muted);
+    }
+
+    .kg-shop-select {
+      min-height: 42px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid var(--kg-line);
+      background: var(--kg-white);
+      font: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--kg-ink);
+      outline: none;
+    }
+
+    main {
+      padding-bottom: 30px;
+    }
+  </style>
+
+</body>
+
+</html>

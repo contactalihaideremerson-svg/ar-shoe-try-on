@@ -37,34 +37,34 @@
   },
   {
     "id": "nike-air-max-1790056527660",
-    "name": "Nike Air Max",
+    "name": "Emerald Embroidered Khussa",
     "price": "2000",
-    "description": "Shoe1",
-    "image": "assets/1790056525370-images--1-.jpg",
+    "description": "Emerald Embroidered Khussa",
+    "image": "assets/khusa-02-green.png",
     "effect": "effects/nike-air-max.deepar"
   },
   {
     "id": "puma-voltaire-1790056758471",
-    "name": "Puma Voltaire",
+    "name": "Pearl Mirror Khussa",
     "price": "3000",
-    "description": "Puma Voltaire",
-    "image": "assets/1790056754444-imgi_178_389364-01_1--1-.jpg",
+    "description": "Pearl Mirror Khussa",
+    "image": "assets/khusa-03.png",
     "effect": "effects/puma-voltaire.deepar"
   },
   {
     "id": "nike-dunk-1790056929235",
-    "name": "Nike Dunk",
+    "name": "Ruby Floral Khussa",
     "price": "4999",
-    "description": "Nike Dunk",
-    "image": "assets/1790056924885-imgi_107_NIKE-DUNK-LOW--GS-.png",
+    "description": "Ruby Floral Khussa",
+    "image": "assets/khusa-04.png",
     "effect": "effects/nike-dunk.deepar"
   },
   {
     "id": "nike-air-force-1-1790057043454",
-    "name": "Nike Air Force 1",
+    "name": "Sapphire Floral Khussa",
     "price": "3999",
-    "description": "Nike Air Force 1",
-    "image": "assets/1790057039770-imgi_147_550a562a-a0a0-4b25-a2d4-8995b5871513.jpg",
+    "description": "Sapphire Floral Khussa",
+    "image": "assets/khusa-sapphire.png",
     "effect": "effects/nike-airforce-1-lv8.deepar"
   },
   {

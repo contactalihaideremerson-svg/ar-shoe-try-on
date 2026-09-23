@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>Your Cart — KARIGAR</title>
+
+  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/5499/5499242.png" type="image/x-icon">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="karigar-theme.css">
+</head>
+
+<body class="kg-page">
+
+  <div id="karigar-header"></div>
+
+  <main>
+    <div class="kg-container">
+      <div class="kg-breadcrumbs">
+        <a href="index.html">Home</a> <span>/</span> <span>Cart</span>
+      </div>
+    </div>
+
+    <div class="kg-page-header" style="padding-top:10px;">
+      <h1 class="kg-serif">Your Cart</h1>
+    </div>
+
+    <div class="kg-container kg-cart-layout">
+      <div id="kgCartItems" class="kg-cart-items"></div>
+
+      <aside class="kg-cart-summary" id="kgCartSummary">
+        <h3 class="kg-serif">Order Summary</h3>
+        <div class="kg-cart-row"><span>Subtotal</span><span id="kgCartSubtotal">Rs. 0</span></div>
+        <div class="kg-cart-row"><span>Shipping</span><span id="kgCartShipping">Free</span></div>
+        <div class="kg-cart-row kg-cart-total"><span>Total</span><span id="kgCartTotal">Rs. 0</span></div>
+        <a href="checkout.html" class="kg-btn kg-btn-primary kg-btn-block" id="kgCheckoutBtn">Proceed to Checkout →</a>
+        <a href="shop.html" class="kg-link-arrow" style="display:block;text-align:center;margin-top:14px;">Continue Shopping</a>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="kg-footer" id="karigar-footer"></footer>
+  <nav class="kg-bottom-nav" id="karigar-bottom-nav"></nav>
+
+  <script src="karigar-cart.js"></script>
+  <script src="karigar-products.js"></script>
+  <script src="karigar-chrome.js"></script>
+  <script>
+    KarigarChrome.init({ active: "cart" });
+
+    const itemsRoot = document.getElementById("kgCartItems");
+    const subtotalEl = document.getElementById("kgCartSubtotal");
+    const totalEl = document.getElementById("kgCartTotal");
+    const checkoutBtn = document.getElementById("kgCheckoutBtn");
+
+    function render() {
+      const cart = KarigarCart.getCart();
+
+      if (!cart.length) {
+        itemsRoot.innerHTML = `
+          <div class="kg-cart-empty">
+            <p>Your cart is empty.</p>
+            <a href="shop.html" class="kg-btn kg-btn-primary">Shop Khussas →</a>
+          </div>
+        `;
+        checkoutBtn.classList.add("kg-btn-disabled-look");
+        checkoutBtn.setAttribute("aria-disabled", "true");
+        checkoutBtn.addEventListener("click", blockIfEmpty);
+      } else {
+        itemsRoot.innerHTML = cart
+          .map(
+            (item) => `
+            <div class="kg-cart-item" data-id="${KarigarProducts.escapeHtml(item.id)}">
+              <img src="${KarigarProducts.escapeHtml(item.image)}" alt="${KarigarProducts.escapeHtml(item.name)}">
+              <div class="kg-cart-item-info">
+                <strong>${KarigarProducts.escapeHtml(item.name)}</strong>
+                <span>${KarigarCart.formatPrice(item.price)}</span>
+                <div class="kg-qty-control">
+                  <button type="button" data-action="dec">−</button>
+                  <span>${item.qty}</span>
+                  <button type="button" data-action="inc">+</button>
+                </div>
+              </div>
+              <button type="button" class="kg-cart-remove" data-action="remove" aria-label="Remove">✕</button>
+            </div>
+          `
+          )
+          .join("");
+      }
+
+      const totals = KarigarCart.getTotals();
+      subtotalEl.textContent = `Rs. ${totals.subtotal.toLocaleString("en-PK")}`;
+      totalEl.textContent = `Rs. ${totals.subtotal.toLocaleString("en-PK")}`;
+    }
+
+    function blockIfEmpty(event) {
+      if (!KarigarCart.getCart().length) {
+        event.preventDefault();
+      }
+    }
+
+    itemsRoot.addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-action]");
+      if (!button) return;
+
+      const row = button.closest(".kg-cart-item");
+      const id = row.getAttribute("data-id");
+      const cart = KarigarCart.getCart();
+      const item = cart.find((entry) => entry.id === id);
+      if (!item) return;
+
+      if (button.dataset.action === "inc") {
+        KarigarCart.setQty(id, item.qty + 1);
+      } else if (button.dataset.action === "dec") {
+        if (item.qty <= 1) {
+          KarigarCart.removeFromCart(id);
+        } else {
+          KarigarCart.setQty(id, item.qty - 1);
+        }
+      } else if (button.dataset.action === "remove") {
+        KarigarCart.removeFromCart(id);
+      }
+
+      render();
+    });
+
+    render();
+  </script>
+
+  <style>
+    .kg-cart-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 34px;
+      padding-bottom: 60px;
+      align-items: flex-start;
+    }
+
+    .kg-cart-items {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .kg-cart-item {
+      display: grid;
+      grid-template-columns: 88px 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 14px;
+      background: var(--kg-white);
+      border: 1px solid var(--kg-line);
+      border-radius: var(--kg-radius-m);
+    }
+
+    .kg-cart-item img {
+      width: 88px;
+      height: 88px;
+      border-radius: 12px;
+      object-fit: cover;
+      background: var(--kg-beige);
+    }
+
+    .kg-cart-item-info strong {
+      display: block;
+      font-size: 13.5px;
+      margin-bottom: 4px;
+    }
+
+    .kg-cart-item-info span {
+      display: block;
+      font-size: 12.5px;
+      color: var(--kg-muted);
+      margin-bottom: 10px;
+    }
+
+    .kg-qty-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid var(--kg-line);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .kg-qty-control button {
+      width: 20px;
+      height: 20px;
+      border: none;
+      background: none;
+      font-size: 15px;
+      cursor: pointer;
+      color: var(--kg-choc);
+    }
+
+    .kg-cart-remove {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--kg-line);
+      background: none;
+      cursor: pointer;
+      color: var(--kg-muted);
+      align-self: start;
+    }
+
+    .kg-cart-remove:hover {
+      color: #b23a3a;
+      border-color: #b23a3a;
+    }
+
+    .kg-cart-empty {
+      background: var(--kg-white);
+      border: 1px dashed var(--kg-line);
+      border-radius: var(--kg-radius-m);
+      padding: 60px 20px;
+      text-align: center;
+      color: var(--kg-muted);
+    }
+
+    .kg-cart-empty p {
+      margin-bottom: 18px;
+    }
+
+    .kg-cart-summary {
+      background: var(--kg-white);
+      border: 1px solid var(--kg-line);
+      border-radius: var(--kg-radius-m);
+      padding: 24px;
+      position: sticky;
+      top: calc(var(--kg-header-h) + 16px);
+    }
+
+    .kg-cart-summary h3 {
+      margin: 0 0 16px;
+      font-weight: 400;
+      font-size: 18px;
+    }
+
+    .kg-cart-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--kg-muted);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--kg-line);
+    }
+
+    .kg-cart-total {
+      border-bottom: none;
+      color: var(--kg-ink);
+      font-weight: 700;
+      font-size: 15px;
+      padding-bottom: 16px;
+    }
+
+    .kg-btn-disabled-look {
+      opacity: 0.55;
+    }
+
+    @media (max-width: 900px) {
+      .kg-cart-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .kg-cart-summary {
+        position: static;
+      }
+    }
+  </style>
+
+</body>
+
+</html>

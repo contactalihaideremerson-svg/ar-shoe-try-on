@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>Contact — KARIGAR</title>
+
+  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/5499/5499242.png" type="image/x-icon">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="karigar-theme.css">
+</head>
+
+<body class="kg-page">
+
+  <div id="karigar-header"></div>
+
+  <main>
+    <div class="kg-container">
+      <div class="kg-breadcrumbs">
+        <a href="index.html">Home</a> <span>/</span> <span>Contact</span>
+      </div>
+    </div>
+
+    <div class="kg-page-header">
+      <span class="kg-eyebrow">Get In Touch</span>
+      <h1 class="kg-serif">We'd Love to Hear From You</h1>
+      <p>Questions about an order, sizing, or our craftsmanship? Send us a message and our team will get back to you.</p>
+    </div>
+
+    <section class="kg-section">
+      <div class="kg-container kg-contact-grid">
+
+        <div class="kg-contact-info">
+          <div class="kg-contact-info-item">
+            <div class="kg-why-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.4 2.1L8 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.4c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.8 2z"/></svg></div>
+            <div><strong>Call Us</strong><span>+92 300 1234567</span></div>
+          </div>
+          <div class="kg-contact-info-item">
+            <div class="kg-why-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h16v16H4z"/><path d="M4 6l8 7 8-7"/></svg></div>
+            <div><strong>Email Us</strong><span>hello@karigar.com</span></div>
+          </div>
+          <div class="kg-contact-info-item">
+            <div class="kg-why-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            <div><strong>Visit Us</strong><span>Lahore, Pakistan</span></div>
+          </div>
+        </div>
+
+        <div class="kg-contact-form-wrap">
+          <form id="kgContactForm" novalidate>
+            <div class="kg-field">
+              <label for="kgContactName">Name</label>
+              <input id="kgContactName" name="name" type="text" required>
+            </div>
+            <div class="kg-field" style="margin-top:16px;">
+              <label for="kgContactEmail">Email</label>
+              <input id="kgContactEmail" name="email" type="email" required>
+            </div>
+            <div class="kg-field" style="margin-top:16px;">
+              <label for="kgContactMessage">Message</label>
+              <textarea id="kgContactMessage" name="message" required></textarea>
+            </div>
+            <button type="submit" class="kg-btn kg-btn-primary kg-btn-block" style="margin-top:20px;">Send Message →</button>
+          </form>
+
+          <div class="kg-contact-success" id="kgContactSuccess" style="display:none;">
+            <div class="kg-order-confirm-icon">✓</div>
+            <h3 class="kg-serif">Message Sent</h3>
+            <p>Thanks for reaching out — our team will get back to you shortly.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="kg-footer" id="karigar-footer"></footer>
+  <nav class="kg-bottom-nav" id="karigar-bottom-nav"></nav>
+
+  <script src="karigar-cart.js"></script>
+  <script src="karigar-chrome.js"></script>
+  <script>
+    KarigarChrome.init({ active: "contact" });
+
+    const form = document.getElementById("kgContactForm");
+    const success = document.getElementById("kgContactSuccess");
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      form.style.display = "none";
+      success.style.display = "block";
+    });
+  </script>
+
+  <style>
+    .kg-contact-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.4fr;
+      gap: 40px;
+      padding-bottom: 20px;
+    }
+
+    .kg-contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .kg-contact-info-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px;
+      background: var(--kg-white);
+      border: 1px solid var(--kg-line);
+      border-radius: var(--kg-radius-m);
+    }
+
+    .kg-contact-info-item strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 3px;
+    }
+
+    .kg-contact-info-item span {
+      display: block;
+      font-size: 12.5px;
+      color: var(--kg-muted);
+    }
+
+    .kg-contact-form-wrap {
+      background: var(--kg-white);
+      border: 1px solid var(--kg-line);
+      border-radius: var(--kg-radius-m);
+      padding: 28px;
+    }
+
+    .kg-contact-success {
+      text-align: center;
+      padding: 30px 10px;
+    }
+
+    .kg-contact-success p {
+      color: var(--kg-muted);
+      font-size: 13.5px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .kg-contact-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+</body>
+
+</html>
