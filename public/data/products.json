@@ -1,9 +1,9 @@
 [
   {
     "id": "nike-air-max-1790056527660",
-    "name": "Emerald Embroidered Khussa",
-    "price": "2000",
-    "description": "Emerald Embroidered Khussa",
+    "name": "Raqs-e-Rooh",
+    "price": "6000",
+    "description": "Inspired by the spirit of Sufism, Raqs-e-Rooh embodies peace, devotion, and grace.",
     "image": "assets/khusa-02-green.png",
     "effect": "effects/nike-air-max.deepar",
     "enabled": true
